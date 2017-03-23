@@ -7,9 +7,10 @@ android:
     - build-tools-25.0.2
     - android-25
     - sys-img-armeabi-v7a-android-25
-    - extra-android-m2repository
-    - extra-google-m2repository
-    - extra-android-support
+
+before_install:
+    - mkdir "$ANDROID_HOME/licenses" || true
+    - echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android_sdk_license"
 
 script:
 - ./gradlew build connectedCheck
