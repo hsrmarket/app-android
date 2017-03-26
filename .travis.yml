@@ -8,7 +8,7 @@ before_install:
     - rm -rf $ANDROID_HOME/*
     - wget https://dl.google.com/android/repository/tools_r25.2.3-linux.zip -O $ANDROID_HOME/sdk.zip
     - unzip $ANDROID_HOME/sdk.zip
-    - mv $ANDROID_HOME/tools/* $ANDROID_HOME/
+    - mv /usr/local/android-sdk/tools/* $ANDROID_HOME/
 
     - echo y | $ANDROID_HOME/bin/sdkmanager "build-tools;25.0.2"
     - echo y | $ANDROID_HOME/bin/sdkmanager "platforms;android-25"
