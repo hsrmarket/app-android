@@ -3,10 +3,10 @@ sudo: required
 jdk: oraclejdk8
 android:
   components:
-    - tools-25.3.1
+    - tools
     - build-tools-25.0.2
     - android-25
-    - platform-tools-25.0.4
+    - platform-tools
     - sys-img-armeabi-v7a-android-25
     - extra-google-m2repository
     - extra-android-m2repository
@@ -16,6 +16,13 @@ android:
     - google-gdk-license-.+
 
 before_install:
+  - echo y | android update sdk -u -a -t tools
+  - echo y | android update sdk -u -a -t platform-tools
+  - echo y | android update sdk -u -a -t build-tools-25.0.2
+  - echo y | android update sdk -u -a -t android-25
+  - echo y | android update sdk -u -a -t extra-google-m2repository
+  - echo y | android update sdk -u -a -t extra-android-m2repository
+
     - mkdir "$ANDROID_HOME/licenses" || true
     - echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android_sdk_license"
     - echo -e "\n33b6a2b64607f11b759f320ef9dff4ae5c47d97a" > "$ANDROID_HOME/licenses/google-gdk-license"
