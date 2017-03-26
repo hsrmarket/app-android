@@ -24,7 +24,9 @@ before_install:
     - ./gradlew dependencies || true
 
 before_script:
-    - (while sleep 3; do echo "y"; done) | $ANDROID_HOME/tools/bin/sdkmanager --licenses
+        - mkdir "$ANDROID_HOME/licenses" || true
+        - echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android_sdk_license"
+        - echo -e "\n33b6a2b64607f11b759f320ef9dff4ae5c47d97a" > "$ANDROID_HOME/licenses/google-gdk-license"
 
 script:
     - ./gradlew clean build connectedCheck --stacktrace
