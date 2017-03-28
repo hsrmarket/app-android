@@ -1,4 +1,4 @@
-package ch.hsrmarket.android;
+package android.hsrmarket.ch.hsrmarket;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("ch.hsrmarket.android", appContext.getPackageName());
+        assertEquals("android.hsrmarket.ch.hsrmarket", appContext.getPackageName());
     }
 }

@@ -1,4 +1,4 @@
-package ch.hsrmarket.android;
+package android.hsrmarket.ch.hsrmarket;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
