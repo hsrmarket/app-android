@@ -16,7 +16,10 @@ branches:
 script:
 - "./gradlew build assembleRelease"
 notifications:
-  email: true
+  email: false
+  slack:
+    rooms:
+      secure: JxREC+1k8bgSeO0p+wp+mEtq1RLXIKKZrzASO+nijg8yqxVHzRiwrFHNEWZeIVnfV4V3Ug+LawWG1U5SH1vjlmY7ZDmsXdwjIad4Y2Wasjviv3xblDIAGLKaRjDbLXJHaSS2HlC3LqWvwLdvBuOH7o1yFduf3eCNSNIcJjB+2ysiHcfTmGxjpfcVkyQvVj7cRKcs+D52zU3PNfBtJP9LvVLlbI7KNV5onXPegnHNhvP+nkSLtrNN2SdfmQBVBeAusQW/QJPZTaOwH3vtLSstircQDUSHUhzOJDZi2ayaU67k5gJWoLLgiwTVI+WkgtPiyphpnEbCbqLfP+slmNYU3u8pHMEddrcmUoWDjB7n8F55heiRN3Dw/qN71poJY4UdzwcnBJeRtCx1uKcehS96Voph1M3MSvQ6U0SM3EabwJ3xJT3UtWnYyu0spmRZ/fyFVkdDXh04iXUmuKJfQmRvqUlzB6m0+SlhmOBP4IXbZtdM4NkYChbJVJF2YGM9Ldh9US479soXchyyZkfQ/ZlV0XBEV8HP/pCNjGnYljYRiuynHNdmlEPHSI/OrUNMe+4SHBohYKt6+BQqLh5HY+KkBwdQm55AYL9dsUV6RQmNv+TsXP0LX4GFal5rO0x1rhVMurdzByN3D6OrAO8/isOq5k9nkQN4bmcSgeprl6mntCs=
 before_cache:
 - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 cache:
@@ -31,11 +34,10 @@ deploy:
   provider: releases
   api_key:
     secure: yguO3YosObFbMH12FbwLS33FbYde5hDJD4Bl6G+rlXHNfnwRblGkAwUzDV3v4e7KEpaT08AsNmSfcM/WMqNhigP4NLXHc0ERSBr/AX8l2NiLB+Cn9NyvXbJQmJIa6qqcpFU+0kKPjytN7cBZtxcI/h9QgLjNivP+lAhp1+d609ZaIUhZS57xfCJ85jlZa2FMR9GzQ+DHu0Oqc4Y10yTHTQguGXYYrZGNeyd9+xsTpNyYQPBfLFSuKMcQ772xFzqGkPBCiitFSqXqDcP4EY3ZbH9PJkEaUcpyE3pEEvF7vSaPxMvvNYgCe9IRuKNPb2ZQDiAsGqPpWDIxEKW7R/etJESHNPaUEMKJSRZWgATIaigdAtuV8pO32J/UvrZsVxzCqbFW8Qa/4VsJLUu0JHGLqqttKyhZoRcUSs3wlVu1TkJjcK/cO+wpIlJmS7btM5xeapBHstlZnULe5P8GroTKDL581EJ7J0C0zB4EZ/0WQbM2x00xrM4vTO6KkutY4Ohku3l96i2YXdbdUfiCzuE5CwZimOQdI75Fx3PSSzlMH7DjLA1STszkXq6jQ7TABdCoDb3mdaGF2qo2c4Ui2L8c4IDUv1MlFle8Nz4Dh6rMr2KwA3jG19kBzKkCQYvnrAPNzYOIbO+SifqzwpJrIs3Y0wbRk/TWncBVOLDq8E5T2bU=
-  file: "/app/build/outputs/test.apk"
   file: app/build/outputs/apk/HSRmarket_V0_${TRAVIS_BUILD_NUMBER}.apk
-  file_glob: "true"
+  file_glob: 'true'
   skip_cleanup: true
-  on:
+  on: 
   branch: master
   repo: hsrmarket/app-android
-  tags: true	
+  tags: true
