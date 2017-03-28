@@ -1,4 +1,4 @@
-package ch.hsrmarket.android;
+package android.hsrmarket.ch.hsrmarket;
 
 import org.junit.Test;
 
