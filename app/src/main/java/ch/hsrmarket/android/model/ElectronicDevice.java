@@ -11,7 +11,7 @@ public class ElectronicDevice extends Article {
     @SerializedName("model")
     private String model;
 
-    public ElectronicDevice(int id, String name, double price, int condition, String description, String createdAt, String imagePath, String type, String producer, String model) {
+    public ElectronicDevice(int id, String name, double price, int condition, String description, String createdAt, String imagePath, Type type, String producer, String model) {
         super(id, name, price, condition, description, createdAt, imagePath, type);
         this.producer = producer;
         this.model = model;

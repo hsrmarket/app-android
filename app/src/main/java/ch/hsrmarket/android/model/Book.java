@@ -13,7 +13,7 @@ public class Book extends Article {
     @SerializedName("publisher")
     private String publisher;
 
-    public Book(int id, String name, double price, int condition, String description, String createdAt, String imagePath, String type, String ISBN, String author, String publisher) {
+    public Book(int id, String name, double price, int condition, String description, String createdAt, String imagePath, Type type, String ISBN, String author, String publisher) {
         super(id, name, price, condition, description, createdAt, imagePath, type);
         this.ISBN = ISBN;
         this.author = author;
