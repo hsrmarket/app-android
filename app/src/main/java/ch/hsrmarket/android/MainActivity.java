@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements ApiClient.OnRespo
 
         ApiClient apiClient = new ApiClient();
         apiClient.setOnResponseListener(this);
-        apiClient.testReq();
+        apiClient.requestElectronicDevices();
 
 
 

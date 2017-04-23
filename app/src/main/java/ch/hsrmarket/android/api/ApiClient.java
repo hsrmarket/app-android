@@ -12,7 +12,10 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import ch.hsrmarket.android.model.Article;
+import ch.hsrmarket.android.model.Book;
+import ch.hsrmarket.android.model.ElectronicDevice;
+import ch.hsrmarket.android.model.OfficeSupply;
+import ch.hsrmarket.android.model.Other;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -28,6 +31,10 @@ public class ApiClient {
         public void onFailure();
     }
 
+    private interface OnJsonReady {
+         Object parse(Response response);
+    }
+
     private static final String TAG = ApiClient.class.getSimpleName();
     private static final String BASE_URL = "http://rest.hsrmarket.ch:9000/api";
 
@@ -41,12 +48,7 @@ public class ApiClient {
         return  new Request.Builder().url(BASE_URL+Path).build();
     }
 
-    private <T> List<T> parseToList(Response response, TypeToken<List<T>> typeToken){
-        Type listType = typeToken.getType();
-        return gson.fromJson(response.body().charStream(),listType);
-    }
-
-    private Callback defaultCallback(){
+    private Callback defaultCallback(final OnJsonReady onJsonReady){
         return new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -61,10 +63,8 @@ public class ApiClient {
                     misfireScenario();
 
                 }else{
-                    List<Article> articles = parseToList(response,new TypeToken<List<Article>>(){});
-                    fireScenario(articles);
-                    Log.d(TAG,articles.get(0).getName());
-
+                    Object parsedOne = onJsonReady.parse(response);
+                    fireScenario(parsedOne);
                 }
             }
         };
@@ -94,9 +94,33 @@ public class ApiClient {
         }
     }
 
-    //TODO generalize it
-    public void testReq(){
-        httpClient.newCall(makeRequest("/articles")).enqueue(defaultCallback());
+    private void requestGeneralList(String path, final TypeToken typeToken){
+        httpClient
+                .newCall(makeRequest(path))
+                .enqueue(defaultCallback(new OnJsonReady() {
+                    @Override
+                    public Object parse(Response response) {
+
+                        Type listType = typeToken.getType();
+                        return gson.fromJson(response.body().charStream(),listType);
+                    }
+                }));
+    }
+
+    public void requestBooks(){
+        requestGeneralList("/articles/books", new TypeToken<List<Book>>(){});
+    }
+
+    public void requestElectronicDevices(){
+        requestGeneralList("/articles/electronics",new TypeToken<List<ElectronicDevice>>(){});
+    }
+
+    public void requestOfficeSupplies(){
+        requestGeneralList("/articles/officesupplies",new TypeToken<List<OfficeSupply>>(){});
+    }
+
+    public void requestOther(){
+        requestGeneralList("/articles/other",new TypeToken<List<Other>>(){});
     }
 
     public void setOnResponseListener(OnResponseListener onResponseListener) {
