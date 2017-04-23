@@ -9,6 +9,7 @@ public class Article {
         @SerializedName("electronic") ELECTRONIC_DEVICE,
         @SerializedName("office supply") OFFICE_SUPPLY,
         @SerializedName("other") OTHER,
+        @SerializedName("article") ARTICLE,
         UNKOWN
     }
 

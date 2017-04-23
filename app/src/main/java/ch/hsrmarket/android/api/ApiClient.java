@@ -1,6 +1,8 @@
 package ch.hsrmarket.android.api;
 
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -8,7 +10,6 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 import ch.hsrmarket.android.model.Article;
@@ -36,43 +37,61 @@ public class ApiClient {
     private OnResponseListener onResponseListener;
     private OnFailureListener onFailureListener;
 
-
     private Request makeRequest(String Path){
         return  new Request.Builder().url(BASE_URL+Path).build();
     }
 
+    private <T> List<T> parseToList(Response response, TypeToken<List<T>> typeToken){
+        Type listType = typeToken.getType();
+        return gson.fromJson(response.body().charStream(),listType);
+    }
 
     private Callback defaultCallback(){
         return new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.e(TAG,e.toString());
-
-                if(onFailureListener != null){
-                    onFailureListener.onFailure();
-                }
+                misfireScenario();
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if(!response.isSuccessful()){
                     Log.d(TAG,response.toString());
+                    misfireScenario();
 
-                    if(onFailureListener != null){
-                        onFailureListener.onFailure();
-                    }
                 }else{
+                    List<Article> articles = parseToList(response,new TypeToken<List<Article>>(){});
+                    fireScenario(articles);
+                    Log.d(TAG,articles.get(0).getName());
 
-                    //TODO more generic
-                    Type listType = new TypeToken<ArrayList<Article>>(){}.getType();
-                    List<Article> articles = gson.fromJson(response.body().charStream(),listType);
-
-                    if(onResponseListener != null){
-                        onResponseListener.onDataLoaded(articles);
-                    }
                 }
             }
         };
+    }
+
+    private void misfireScenario(){
+        if(onFailureListener != null){
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+                @Override
+                public void run() {
+                    onFailureListener.onFailure();
+                }
+            });
+        }
+    }
+
+    private void fireScenario(final Object object){
+        if(onResponseListener != null){
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+                @Override
+                public void run() {
+                    onResponseListener.onDataLoaded(object);
+                }
+            });
+        }
     }
 
     //TODO generalize it
