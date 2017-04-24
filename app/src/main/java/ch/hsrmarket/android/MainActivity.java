@@ -1,43 +1,43 @@
 package ch.hsrmarket.android;
 
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.EditText;
+import android.support.v7.widget.Toolbar;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import ch.hsrmarket.android.api.ApiClient;
+import ch.hsrmarket.android.adapter.ViewPagerAdapter;
 import ch.hsrmarket.android.model.Article;
 
-public class MainActivity extends AppCompatActivity implements ApiClient.OnResponseListener {
-    private EditText etId;
-    private EditText etISBN;
-    private EditText etAuthor;
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(ch.hsrmarket.android.R.layout.activity_main);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        etId = (EditText) findViewById(R.id.et_id);
-        etISBN = (EditText) findViewById(R.id.et_isbn);
-        etAuthor = (EditText) findViewById(R.id.et_author);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-        ApiClient apiClient = new ApiClient();
-        apiClient.setOnResponseListener(this);
-        apiClient.requestElectronicDevices();
+        List<Article.Type> types = new ArrayList<>(Arrays.asList(Article.Type.values()));
+        types.remove(Article.Type.UNKOWN);
 
+        for(Article.Type t : types){
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("appointedCategory",t);
 
+            CategoryFragment fragment = new CategoryFragment();
+            fragment.setArguments(bundle);
 
+            adapter.addFragment(fragment,t);
+        }
 
-    }
-
-
-    @Override
-    public void onDataLoaded(Object data) {
-        List<Article> articles = (List<Article>) data;
-
-        etId.setText(articles.get(1).getName());
+        viewPager.setAdapter(adapter);
     }
 }

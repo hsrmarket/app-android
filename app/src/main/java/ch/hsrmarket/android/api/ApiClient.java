@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import ch.hsrmarket.android.model.Article;
 import ch.hsrmarket.android.model.Book;
 import ch.hsrmarket.android.model.ElectronicDevice;
 import ch.hsrmarket.android.model.OfficeSupply;
@@ -103,6 +104,43 @@ public class ApiClient {
 
                         Type listType = typeToken.getType();
                         return gson.fromJson(response.body().charStream(),listType);
+                    }
+                }));
+    }
+
+    public void requestSingleArticle(int id){
+        httpClient
+                .newCall(makeRequest("/articles/"+id))
+                .enqueue(defaultCallback(new OnJsonReady() {
+                    @Override
+                    public Object parse(Response response) {
+
+                        Article article = gson.fromJson(response.body().charStream(),Article.class);
+                        Class targetClass;
+
+                        switch (article.getType()){
+                            case BOOK:
+                                targetClass = Book.class;
+                                break;
+
+                            case ELECTRONIC_DEVICE:
+                                targetClass = ElectronicDevice.class;
+                                break;
+
+                            case OFFICE_SUPPLY:
+                                targetClass = OfficeSupply.class;
+                                break;
+
+                            case OTHER:
+                                targetClass = Other.class;
+                                break;
+
+                            default:
+                                targetClass = Article.class;
+                                break;
+                        }
+
+                        return gson.fromJson(response.body().charStream(),targetClass);
                     }
                 }));
     }
