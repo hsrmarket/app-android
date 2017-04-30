@@ -41,21 +41,6 @@ public class InstrumentedTest {
 
     @Test
     public void sendData(){
-        String isbn = "ESPRESSO TEST";
-        String author = "ANDROID";
-
-        onView(withId(R.id.et_isbn)).perform(typeText(isbn), closeSoftKeyboard());
-        onView(withId(R.id.et_author)).perform(typeText(author), closeSoftKeyboard());
-        onView(withId(R.id.btn_post)).perform(click());
-
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        onView(withId(R.id.et_isbn)).check(matches(withText((""))));
-        onView(withId(R.id.et_author)).check(matches(withText((""))));
 
     }
 }

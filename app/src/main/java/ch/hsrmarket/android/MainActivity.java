@@ -1,5 +1,6 @@
 package ch.hsrmarket.android;
 
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -35,9 +36,26 @@ public class MainActivity extends AppCompatActivity {
             CategoryFragment fragment = new CategoryFragment();
             fragment.setArguments(bundle);
 
-            adapter.addFragment(fragment,t);
+            adapter.addFragment(fragment,getTabName(t));
         }
 
         viewPager.setAdapter(adapter);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
+    }
+
+    private String getTabName(Article.Type type){
+        switch (type){
+            case BOOK:
+                return getString(R.string.tab_books);
+            case ELECTRONIC_DEVICE:
+                return getString(R.string.tab_electronic_devices);
+            case OFFICE_SUPPLY:
+                return getString(R.string.tab_office_supplies);
+            case OTHER:
+                return getString(R.string.tab_others);
+            default:
+                return "Error";
+        }
     }
 }

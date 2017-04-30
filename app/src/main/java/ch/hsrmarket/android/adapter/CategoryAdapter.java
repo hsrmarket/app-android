@@ -39,6 +39,7 @@ public class CategoryAdapter<T extends Article> extends RecyclerView.Adapter<Cat
 
     @Override
     public int getItemCount() {
+        if(data == null) return 0;
         return data.size();
     }
 
