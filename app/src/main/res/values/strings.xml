@@ -6,4 +6,9 @@
     <string name="tab_office_supplies">Office Supplies</string>
     <string name="tab_others">Others</string>
 
+    <string name="description_empty_sign">The List is empty.</string>
+    <string name="error_no_internet">There is no Internet connection available. Please check your Internet connection.</string>
+    <string name="title_activity_article">ArticleActivity</string>
+
+
 </resources>

@@ -110,4 +110,18 @@ public class Article {
     public void setType(Type type) {
         this.type = type;
     }
+
+    @Override
+    public String toString() {
+        return "Article{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", condition=" + condition +
+                ", description='" + description + '\'' +
+                ", createdAt='" + createdAt + '\'' +
+                ", imagePath='" + imagePath + '\'' +
+                ", type=" + type +
+                '}';
+    }
 }

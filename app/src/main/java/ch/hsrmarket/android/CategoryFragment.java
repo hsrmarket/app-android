@@ -1,5 +1,9 @@
 package ch.hsrmarket.android;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -7,30 +11,25 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.List;
 
 import ch.hsrmarket.android.adapter.CategoryAdapter;
+import ch.hsrmarket.android.adapter.EmptyAdapter;
 import ch.hsrmarket.android.api.ApiClient;
 import ch.hsrmarket.android.model.Article;
-import ch.hsrmarket.android.model.Book;
-import ch.hsrmarket.android.model.ElectronicDevice;
-import ch.hsrmarket.android.model.OfficeSupply;
-import ch.hsrmarket.android.model.Other;
 
 
-public class CategoryFragment extends Fragment implements ApiClient.OnResponseListener{
+public class CategoryFragment extends Fragment implements ApiClient.OnResponseListener, ApiClient.OnFailureListener, CategoryAdapter.OnItemClickListener{
 
-    private CategoryAdapter adapter ;
-    private Article.Type appointedCategory;
     private RecyclerView recyclerView;
 
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_category, container, false);
 
         Bundle bundle = getArguments();
-        appointedCategory = (Article.Type) bundle.getSerializable("appointedCategory");
+        Article.Type appointedCategory = (Article.Type) bundle.getSerializable("appointedCategory");
 
         recyclerView = (RecyclerView) root.findViewById(R.id.listCategory);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
@@ -38,20 +37,13 @@ public class CategoryFragment extends Fragment implements ApiClient.OnResponseLi
 
         ApiClient apiClient = new ApiClient();
         apiClient.setOnResponseListener(this);
+        apiClient.setOnFailureListener(this);
 
-        switch (appointedCategory){
-            case BOOK:
-                apiClient.requestBooks();
-                break;
-            case ELECTRONIC_DEVICE:
-                apiClient.requestElectronicDevices();
-                break;
-            case OFFICE_SUPPLY:
-                apiClient.requestOfficeSupplies();
-                break;
-            case OTHER:
-                apiClient.requestOther();
-                break;
+        if(isOnline()){
+            apiClient.requestCategoryList(appointedCategory);
+        }else {
+            EmptyAdapter adapter = new EmptyAdapter(getString(R.string.error_no_internet));
+            recyclerView.setAdapter(adapter);
         }
 
         return root;
@@ -59,33 +51,32 @@ public class CategoryFragment extends Fragment implements ApiClient.OnResponseLi
 
     @Override
     public void onDataLoaded(Object data) {
+        List<Article> items = (List<Article>) data;
+        CategoryAdapter adapter = new CategoryAdapter(items);
+        adapter.setOnItemClickListener(this);
+        recyclerView.setAdapter(adapter);
+    }
 
-        switch (appointedCategory){
-            case BOOK:
-                List<Book> books = (List<Book>) data;
-                adapter = new CategoryAdapter<>(books);
-                recyclerView.setAdapter(adapter);
+    @Override
+    public void onFailure(String msg) {
+        EmptyAdapter adapter = new EmptyAdapter(msg);
+        recyclerView.setAdapter(adapter);
+    }
 
-                break;
-            case ELECTRONIC_DEVICE:
-                List<ElectronicDevice> electronicDevices = (List<ElectronicDevice>) data;
-                adapter = new CategoryAdapter<>(electronicDevices);
-                recyclerView.setAdapter(adapter);
+    public boolean isOnline() {
+        ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
 
-                break;
-            case OFFICE_SUPPLY:
-                List<OfficeSupply> officeSupplies = (List<OfficeSupply>) data;
-                adapter = new CategoryAdapter<>(officeSupplies);
-                recyclerView.setAdapter(adapter);
+    @Override
+    public void onClick(View view, int position) {
+        Integer id = (Integer) view.getTag();
 
-                break;
-            case OTHER:
-                List<Other> others = (List<Other>) data;
-                adapter = new CategoryAdapter<>(others);
-                recyclerView.setAdapter(adapter);
+        Intent intent = new Intent(getContext(),ArticleActivity.class);
+        intent.putExtra("id",id);
 
-                break;
-        }
+        startActivity(intent);
     }
 }
 
