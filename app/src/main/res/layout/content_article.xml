@@ -6,6 +6,84 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="ch.hsrmarket.android.ArticleActivity"
-    tools:showIn="@layout/activity_article">
+    tools:showIn="@layout/activity_article"
 
+    android:layout_margin="@dimen/general"
+    >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:id="@+id/article_description"
+
+        android:layout_alignParentTop="true"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:id="@+id/article_price"
+
+        android:layout_below="@id/article_description"
+        android:textStyle="bold"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:id="@+id/article_condition"
+
+        android:layout_below="@+id/article_price"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:id="@+id/article_createdAt"
+
+        android:layout_below="@id/article_condition"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:id="@+id/article_id"
+
+        android:layout_below="@id/article_createdAt"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:id="@+id/article_extra1"
+
+        android:layout_below="@id/article_id"
+        android:visibility="gone"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:id="@+id/article_extra2"
+
+        android:layout_below="@id/article_extra1"
+        android:visibility="gone"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:id="@+id/article_extra3"
+
+        android:layout_below="@id/article_extra2"
+        android:visibility="gone"
+        />
 </RelativeLayout>

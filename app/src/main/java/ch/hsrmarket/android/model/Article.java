@@ -59,8 +59,8 @@ public class Article {
         this.name = name;
     }
 
-    public double getPrice() {
-        return price;
+    public String getPrice() {
+        return String.format( "%.2f", price );
     }
 
     public void setPrice(double price) {

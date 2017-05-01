@@ -38,7 +38,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         holder.root.setTag(article.getId());
 
         holder.name.setText(article.getName());
-        holder.price.setText( String.format( "%.2f", article.getPrice() ));
+        holder.price.setText( article.getPrice());
         holder.description.setText(article.getDescription());
     }
 

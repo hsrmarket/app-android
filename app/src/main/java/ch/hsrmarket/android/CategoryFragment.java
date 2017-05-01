@@ -24,12 +24,13 @@ import ch.hsrmarket.android.model.Article;
 public class CategoryFragment extends Fragment implements ApiClient.OnResponseListener, ApiClient.OnFailureListener, CategoryAdapter.OnItemClickListener{
 
     private RecyclerView recyclerView;
+    private Article.Type appointedCategory;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_category, container, false);
 
         Bundle bundle = getArguments();
-        Article.Type appointedCategory = (Article.Type) bundle.getSerializable("appointedCategory");
+        appointedCategory = (Article.Type) bundle.getSerializable(getString(R.string.appointed_category));
 
         recyclerView = (RecyclerView) root.findViewById(R.id.listCategory);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
@@ -74,9 +75,12 @@ public class CategoryFragment extends Fragment implements ApiClient.OnResponseLi
         Integer id = (Integer) view.getTag();
 
         Intent intent = new Intent(getContext(),ArticleActivity.class);
-        intent.putExtra("id",id);
+        intent.putExtra(getString(R.string.article_id),id);
+        intent.putExtra(getString(R.string.article_type),appointedCategory);
 
-        startActivity(intent);
+        if(isOnline()){
+            startActivity(intent);
+        }
     }
 }
 

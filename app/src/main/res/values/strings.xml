@@ -8,7 +8,12 @@
 
     <string name="description_empty_sign">The List is empty.</string>
     <string name="error_no_internet">There is no Internet connection available. Please check your Internet connection.</string>
-    <string name="title_activity_article">ArticleActivity</string>
+    <string name="title_activity_article">Article</string>
+
+    <!-- For programming purpose -->
+    <string name="appointed_category">appointedCategory</string>
+    <string name="article_id">requestedId</string>
+    <string name="article_type">requestedType</string>
 
 
 </resources>

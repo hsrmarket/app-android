@@ -21,7 +21,11 @@
         <activity
             android:name=".ArticleActivity"
             android:label="@string/title_activity_article"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ch.hsrmarket.android.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
