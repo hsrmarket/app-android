@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">HSRmarket</string>
+
+    <string name="tab_books">Books</string>
+    <string name="tab_electronic_devices">Electronic Devices</string>
+    <string name="tab_office_supplies">Office Supplies</string>
+    <string name="tab_others">Others</string>
+
 </resources>

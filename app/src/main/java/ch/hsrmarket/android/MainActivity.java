@@ -1,125 +1,61 @@
 package ch.hsrmarket.android;
 
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
+import android.support.v7.widget.Toolbar;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import ch.hsrmarket.android.adapter.ViewPagerAdapter;
+import ch.hsrmarket.android.model.Article;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "HSRMARKET_API";
-
-    private ApiInterface apiService;
-    private RecyclerView recyclerView;
-    private EditText etId;
-    private EditText etISBN;
-    private EditText etAuthor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(ch.hsrmarket.android.R.layout.activity_main);
 
-        recyclerView = (RecyclerView) findViewById(R.id.listview);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        apiService = ApiClient.getClient().create(ApiInterface.class);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-        updateData();
+        List<Article.Type> types = new ArrayList<>(Arrays.asList(Article.Type.values()));
+        types.remove(Article.Type.UNKOWN);
 
-        final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            public void onRefresh() {
-                updateData();
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
+        for(Article.Type t : types){
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("appointedCategory",t);
 
-        etId = (EditText) findViewById(R.id.et_id);
-        etISBN = (EditText) findViewById(R.id.et_isbn);
-        etAuthor = (EditText) findViewById(R.id.et_author);
+            CategoryFragment fragment = new CategoryFragment();
+            fragment.setArguments(bundle);
 
-        Button btnPost = (Button) findViewById(R.id.btn_post);
-        btnPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            adapter.addFragment(fragment,getTabName(t));
+        }
 
-                if(etId.getText().toString().isEmpty() || etISBN.getText().toString().isEmpty() || etAuthor.getText().toString().isEmpty()){
-                    Toast.makeText(getApplicationContext(),"Fields mustn't be empty", Toast.LENGTH_SHORT).show();
-                }else {
-                    int id = Integer.valueOf(etId.getText().toString());
-                    Book b = new Book(id,etISBN.getText().toString(),etAuthor.getText().toString());
-
-                    postBook(b);
-                }
-
-            }
-        });
-
+        viewPager.setAdapter(adapter);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
-    private void updateData(){
-        Call<List<Book>> call = apiService.getAllBooks();
-        call.enqueue(new Callback<List<Book>>() {
-            @Override
-            public void onResponse(Call<List<Book>> call, Response<List<Book>> response) {
-
-                if(response.isSuccessful()){
-                    List<Book>  books = response.body();
-                    Collections.reverse(books);
-                    recyclerView.setAdapter(new BookAdapter(books,R.layout.list_item,getApplicationContext()));
-
-                    etId.setText("" + (books.get(0).getId()+1) );
-
-                }else {
-
-                    Log.e(TAG,response.errorBody().toString());
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<List<Book>> call, Throwable t) {
-                Log.e(TAG, t.toString());
-            }
-        });
-    }
-
-    private void postBook(Book book){
-        Call<Book> call = apiService.createBook(book);
-        call.enqueue(new Callback<Book>() {
-            @Override
-            public void onResponse(Call<Book> call, Response<Book> response) {
-                if(response.isSuccessful()){
-                    emptyFields();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Book> call, Throwable t) {
-                Log.e(TAG, t.toString());
-            }
-        });
-    }
-
-    private void emptyFields(){
-        etISBN.setText("");
-        etAuthor.setText("");
-
-        updateData();
-
+    private String getTabName(Article.Type type){
+        switch (type){
+            case BOOK:
+                return getString(R.string.tab_books);
+            case ELECTRONIC_DEVICE:
+                return getString(R.string.tab_electronic_devices);
+            case OFFICE_SUPPLY:
+                return getString(R.string.tab_office_supplies);
+            case OTHER:
+                return getString(R.string.tab_others);
+            default:
+                return "Error";
+        }
     }
 }
