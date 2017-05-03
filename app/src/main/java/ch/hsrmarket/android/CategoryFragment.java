@@ -75,8 +75,8 @@ public class CategoryFragment extends Fragment implements ApiClient.OnResponseLi
         Integer id = (Integer) view.getTag();
 
         Intent intent = new Intent(getContext(),ArticleActivity.class);
-        intent.putExtra(getString(R.string.article_id),id);
-        intent.putExtra(getString(R.string.article_type),appointedCategory);
+        intent.putExtra(getString(R.string.article_pass_id),id);
+        intent.putExtra(getString(R.string.article_pass_type),appointedCategory);
 
         if(isOnline()){
             startActivity(intent);
