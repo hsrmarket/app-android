@@ -40,12 +40,16 @@ public class CategoryFragment extends Fragment implements ApiClient.OnResponseLi
         apiClient.setOnResponseListener(this);
         apiClient.setOnFailureListener(this);
 
+        EmptyAdapter adapter;
+
         if(isOnline()){
             apiClient.requestCategoryList(appointedCategory);
+            adapter = new EmptyAdapter();
         }else {
-            EmptyAdapter adapter = new EmptyAdapter(getString(R.string.error_no_internet));
-            recyclerView.setAdapter(adapter);
+            adapter = new EmptyAdapter(getString(R.string.error_no_internet),R.drawable.ic_warning);
         }
+
+        recyclerView.setAdapter(adapter);
 
         return root;
     }
@@ -53,14 +57,20 @@ public class CategoryFragment extends Fragment implements ApiClient.OnResponseLi
     @Override
     public void onDataLoaded(Object data) {
         List<Article> items = (List<Article>) data;
-        CategoryAdapter adapter = new CategoryAdapter(items);
-        adapter.setOnItemClickListener(this);
-        recyclerView.setAdapter(adapter);
+
+        if(items.isEmpty()){
+            EmptyAdapter adapter = new EmptyAdapter(getString(R.string.error_empty),R.drawable.ic_empty);
+            recyclerView.setAdapter(adapter);
+        }else {
+            CategoryAdapter adapter = new CategoryAdapter(items);
+            adapter.setOnItemClickListener(this);
+            recyclerView.setAdapter(adapter);
+        }
     }
 
     @Override
     public void onFailure(String msg) {
-        EmptyAdapter adapter = new EmptyAdapter(msg);
+        EmptyAdapter adapter = new EmptyAdapter(msg,R.drawable.ic_warning);
         recyclerView.setAdapter(adapter);
     }
 

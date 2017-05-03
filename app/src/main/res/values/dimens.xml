@@ -6,4 +6,8 @@
     <dimen name="general">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
+    <dimen name="card_side_margin">8dp</dimen>
+    <dimen name="card_topbottom_margin">4dp</dimen>
+    <dimen name="card_radius">2dp</dimen>
+
 </resources>

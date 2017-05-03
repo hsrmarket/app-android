@@ -8,6 +8,7 @@
 
     <string name="description_empty_sign">The List is empty.</string>
     <string name="error_no_internet">There is no Internet connection available. Please check your Internet connection.</string>
+    <string name="error_empty">No articles in this category available.</string>
     <string name="title_activity_article">Article</string>
 
     <string name="article_name">Name</string>
