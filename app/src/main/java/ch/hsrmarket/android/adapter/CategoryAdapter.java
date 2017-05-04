@@ -4,21 +4,24 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.List;
 
 import ch.hsrmarket.android.R;
 import ch.hsrmarket.android.model.Article;
 
-public class CategoryAdapter<T extends Article> extends RecyclerView.Adapter<CategoryViewHolder> {
-    private List<T> data;
+public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
 
-    public CategoryAdapter(List<T> data){
-        this.data = data;
+    public interface OnItemClickListener{
+        public void onClick(View view, int position);
     }
 
-    public CategoryAdapter(){
+    private List<Article> data;
+    private OnItemClickListener clickListener;
 
+    public CategoryAdapter(List<Article> data){
+        this.data = data;
     }
 
     @Override
@@ -32,19 +35,43 @@ public class CategoryAdapter<T extends Article> extends RecyclerView.Adapter<Cat
     public void onBindViewHolder(CategoryViewHolder holder, int position) {
         Article article = data.get(position);
 
+        holder.root.setTag(article.getId());
+
         holder.name.setText(article.getName());
-        holder.price.setText(""+article.getPrice());
+        holder.price.setText( article.getPrice());
         holder.description.setText(article.getDescription());
     }
 
     @Override
     public int getItemCount() {
-        if(data == null) return 0;
         return data.size();
     }
 
-    public void setData(List<T> data) {
-        this.data = data;
+    public void setOnItemClickListener(OnItemClickListener clickListener) {
+        this.clickListener = clickListener;
     }
 
+    public class CategoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public TextView name, price, description;
+        public View root;
+
+        public CategoryViewHolder(View itemView) {
+            super(itemView);
+
+            root = itemView;
+            name = (TextView) itemView.findViewById(R.id.item_name);
+            price = (TextView) itemView.findViewById(R.id.item_price);
+            description = (TextView) itemView.findViewById(R.id.item_description);
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if(clickListener != null){
+                clickListener.onClick(v,getAdapterPosition());
+            }
+        }
+    }
 }
+

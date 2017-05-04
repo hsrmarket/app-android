@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
         for(Article.Type t : types){
             Bundle bundle = new Bundle();
-            bundle.putSerializable("appointedCategory",t);
+            bundle.putSerializable(getString(R.string.appointed_category),t);
 
             CategoryFragment fragment = new CategoryFragment();
             fragment.setArguments(bundle);

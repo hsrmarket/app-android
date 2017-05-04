@@ -59,8 +59,8 @@ public class Article {
         this.name = name;
     }
 
-    public double getPrice() {
-        return price;
+    public String getPrice() {
+        return String.format( "%.2f", price );
     }
 
     public void setPrice(double price) {
@@ -109,5 +109,19 @@ public class Article {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return "Article{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", condition=" + condition +
+                ", description='" + description + '\'' +
+                ", createdAt='" + createdAt + '\'' +
+                ", imagePath='" + imagePath + '\'' +
+                ", type=" + type +
+                '}';
     }
 }

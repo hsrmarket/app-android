@@ -32,5 +32,13 @@ public class ElectronicDevice extends Article {
     public void setModel(String model) {
         this.model = model;
     }
+
+    @Override
+    public String toString() {
+        return "ElectronicDevice{" +
+                "producer='" + producer + '\'' +
+                ", model='" + model + '\'' +
+                "} " + super.toString();
+    }
 }
 

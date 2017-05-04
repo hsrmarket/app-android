@@ -43,4 +43,13 @@ public class Book extends Article {
     public void setPublisher(String publisher) {
         this.publisher = publisher;
     }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "ISBN='" + ISBN + '\'' +
+                ", author='" + author + '\'' +
+                ", publisher='" + publisher + '\'' +
+                "} " + super.toString();
+    }
 }

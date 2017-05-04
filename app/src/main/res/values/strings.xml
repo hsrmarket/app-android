@@ -6,4 +6,31 @@
     <string name="tab_office_supplies">Office Supplies</string>
     <string name="tab_others">Others</string>
 
+    <string name="description_empty_sign">The List is empty.</string>
+    <string name="error_no_internet">There is no Internet connection available. Please check your Internet connection.</string>
+    <string name="error_empty">No articles in this category available.</string>
+    <string name="title_activity_article">Article</string>
+
+    <string name="article_name">Name</string>
+    <string name="article_description">Description</string>
+    <string name="article_price">Price</string>
+    <string name="article_condition">Condition</string>
+    <string name="article_created_at">Created At</string>
+    <string name="article_id">Article No.</string>
+
+    <string name="article_author">Author</string>
+    <string name="article_publisher">Publisher</string>
+    <string name="article_isbn">ISBN</string>
+
+    <string name="article_producer">Manufacturer</string>
+    <string name="article_model">Model No.</string>
+
+
+
+    <!-- For programming purpose -->
+    <string name="appointed_category">appointedCategory</string>
+    <string name="article_pass_id">requestedId</string>
+    <string name="article_pass_type">requestedType</string>
+
+
 </resources>

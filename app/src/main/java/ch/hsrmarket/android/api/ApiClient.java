@@ -29,7 +29,7 @@ public class ApiClient {
         public void onDataLoaded(Object data);
     }
     public interface OnFailureListener{
-        public void onFailure();
+        public void onFailure(String msg);
     }
 
     private interface OnJsonReady {
@@ -54,14 +54,14 @@ public class ApiClient {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.e(TAG,e.toString());
-                misfireScenario();
+                misfireScenario(e.toString());
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if(!response.isSuccessful()){
                     Log.d(TAG,response.toString());
-                    misfireScenario();
+                    misfireScenario(response.toString());
 
                 }else{
                     Object parsedOne = onJsonReady.parse(response);
@@ -71,13 +71,13 @@ public class ApiClient {
         };
     }
 
-    private void misfireScenario(){
+    private void misfireScenario(final String msg){
         if(onFailureListener != null){
             new Handler(Looper.getMainLooper()).post(new Runnable() {
 
                 @Override
                 public void run() {
-                    onFailureListener.onFailure();
+                    onFailureListener.onFailure(msg);
                 }
             });
         }
@@ -95,14 +95,34 @@ public class ApiClient {
         }
     }
 
-    private void requestGeneralList(String path, final TypeToken typeToken){
+    public void requestCategoryList(Article.Type category){
+        String path = "/articles";
+
+        switch (category){
+            case BOOK:
+                path += "/books";
+                break;
+            case ELECTRONIC_DEVICE:
+                path += "/electronics";
+                break;
+            case OFFICE_SUPPLY:
+                path += "/officesupplies";
+                break;
+            case OTHER:
+                path += "/other";
+                break;
+
+            default:
+                throw new AssertionError("Forgot to implement");
+        }
+
         httpClient
                 .newCall(makeRequest(path))
                 .enqueue(defaultCallback(new OnJsonReady() {
                     @Override
                     public Object parse(Response response) {
 
-                        Type listType = typeToken.getType();
+                        Type listType = new TypeToken<List<Article>>(){}.getType();
                         return gson.fromJson(response.body().charStream(),listType);
                     }
                 }));
@@ -114,8 +134,15 @@ public class ApiClient {
                 .enqueue(defaultCallback(new OnJsonReady() {
                     @Override
                     public Object parse(Response response) {
+                        String json = "";
 
-                        Article article = gson.fromJson(response.body().charStream(),Article.class);
+                        try {
+                            json = response.body().string();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        Article article = gson.fromJson(json,Article.class);
                         Class targetClass;
 
                         switch (article.getType()){
@@ -136,29 +163,12 @@ public class ApiClient {
                                 break;
 
                             default:
-                                targetClass = Article.class;
-                                break;
+                                throw new AssertionError("Forgot to implement");
                         }
 
-                        return gson.fromJson(response.body().charStream(),targetClass);
+                        return gson.fromJson(json,targetClass);
                     }
                 }));
-    }
-
-    public void requestBooks(){
-        requestGeneralList("/articles/books", new TypeToken<List<Book>>(){});
-    }
-
-    public void requestElectronicDevices(){
-        requestGeneralList("/articles/electronics",new TypeToken<List<ElectronicDevice>>(){});
-    }
-
-    public void requestOfficeSupplies(){
-        requestGeneralList("/articles/officesupplies",new TypeToken<List<OfficeSupply>>(){});
-    }
-
-    public void requestOther(){
-        requestGeneralList("/articles/other",new TypeToken<List<Other>>(){});
     }
 
     public void setOnResponseListener(OnResponseListener onResponseListener) {
