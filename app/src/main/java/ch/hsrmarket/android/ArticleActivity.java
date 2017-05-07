@@ -1,6 +1,7 @@
 package ch.hsrmarket.android;
 
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
@@ -8,21 +9,24 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import ch.hsrmarket.android.api.ApiClient;
+import ch.hsrmarket.android.model.Address;
 import ch.hsrmarket.android.model.Article;
 import ch.hsrmarket.android.model.Book;
 import ch.hsrmarket.android.model.ElectronicDevice;
+import ch.hsrmarket.android.model.Person;
 
-public class ArticleActivity extends AppCompatActivity implements ApiClient.OnResponseListener {
+public class ArticleActivity extends AppCompatActivity implements ApiClient.OnResponseListener, View.OnClickListener, ApiClient.OnFailureListener {
 
     private Article.Type type;
+    private Article currentArticle;
+
+    public static final int ARTICLE_REQUEST = 5;
+    public static final int PURCHASE_POST = 8;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,32 +37,43 @@ public class ArticleActivity extends AppCompatActivity implements ApiClient.OnRe
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_buy);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        fab.setOnClickListener(this);
 
         Bundle bundle = getIntent().getExtras();
         int requestId = bundle.getInt(getString(R.string.article_pass_id),-1);
         type = (Article.Type) bundle.getSerializable(getString(R.string.article_pass_type));
 
-        ApiClient apiClient = new ApiClient();
-        apiClient.setOnResponseListener(this);
+        ApiClient apiClient = new ApiClient(getApplicationContext(),ARTICLE_REQUEST,this,this);
         apiClient.requestSingleArticle(requestId);
     }
 
     @Override
-    public void onDataLoaded(Object data) {
-        loadExistingArticle(data);
+    public void onDataLoaded(Object data, int requestCode) {
+        switch (requestCode){
+            case ARTICLE_REQUEST:
+                loadExistingArticle(data);
+                break;
+            case PURCHASE_POST:
+                Toast.makeText(getApplicationContext(),getString(R.string.msg_successful_purchased),Toast.LENGTH_SHORT).show();
+                finish();
+                break;
+        }
+    }
 
+    @Override
+    public void onFailure(String msg, int requestCode) {
+        switch (requestCode){
+            case ARTICLE_REQUEST:
+            case PURCHASE_POST:
+                Toast.makeText(getApplicationContext(),msg, Toast.LENGTH_SHORT).show();
+                finish();
+                break;
+        }
     }
 
     private void loadExistingArticle(Object data){
-        Article article = (Article) data;
-        setTitle(article.getName());
+        currentArticle = (Article) data;
+        setTitle(currentArticle.getName());
 
         TextInputEditText etName, etDescription, etPrice, etCondition, etCreatedAt, etId,
                 etExtra1, etExtra2, etExtra3 ;
@@ -77,15 +92,12 @@ public class ArticleActivity extends AppCompatActivity implements ApiClient.OnRe
         etName.setVisibility(View.GONE);
         setDisabled(basicViews);
 
-        String[] basicTexts = new String[]{article.getDescription(), article.getPrice(), ""+article.getCondition(), article.getCreatedAt(), ""+article.getId() };
+        String[] basicTexts = new String[]{currentArticle.getDescription(), currentArticle.getPrice(), ""+currentArticle.getCondition(), currentArticle.getCreatedAt(), ""+currentArticle.getId() };
         setText(basicViews, basicTexts);
 
         TextInputEditText[] extraViews;
         TextInputLayout[] extraHintsLayouts;
         String[] hints, extraTexts;
-
-        TextInputLayout t = (TextInputLayout) findViewById(R.id.article_hint_id);
-        t.setHintAnimationEnabled(false);
 
         switch (type){
             case BOOK:
@@ -160,6 +172,24 @@ public class ArticleActivity extends AppCompatActivity implements ApiClient.OnRe
         for(int i = 0; i < views.length; i++){
             views[i].setText(texts[i]);
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()){
+            case R.id.fab_buy:
+
+                //TODO remove it
+                Address address = new Address("","",0,"");
+                Person person = new Person(30,0,"","",address,"","","",false);
+
+                ApiClient apiClient = new ApiClient(getApplicationContext(),PURCHASE_POST,this,this);
+                apiClient.createPurchase(currentArticle,person);
+
+                break;
+        }
+
     }
 
     @Override

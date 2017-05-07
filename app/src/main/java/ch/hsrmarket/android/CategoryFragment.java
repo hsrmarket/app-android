@@ -1,9 +1,6 @@
 package ch.hsrmarket.android;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -26,6 +22,8 @@ public class CategoryFragment extends Fragment implements ApiClient.OnResponseLi
     private RecyclerView recyclerView;
     private Article.Type appointedCategory;
 
+    public static final int CATEGORY_ITEMS_REQUEST = 3;
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_category, container, false);
 
@@ -36,48 +34,42 @@ public class CategoryFragment extends Fragment implements ApiClient.OnResponseLi
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
 
-        ApiClient apiClient = new ApiClient();
-        apiClient.setOnResponseListener(this);
-        apiClient.setOnFailureListener(this);
-
-        EmptyAdapter adapter;
-
-        if(isOnline()){
-            apiClient.requestCategoryList(appointedCategory);
-            adapter = new EmptyAdapter();
-        }else {
-            adapter = new EmptyAdapter(getString(R.string.error_no_internet),R.drawable.ic_warning);
-        }
-
-        recyclerView.setAdapter(adapter);
-
         return root;
     }
 
     @Override
-    public void onDataLoaded(Object data) {
-        List<Article> items = (List<Article>) data;
+    public void onStart() {
+        super.onStart();
 
-        if(items.isEmpty()){
-            EmptyAdapter adapter = new EmptyAdapter(getString(R.string.error_empty),R.drawable.ic_empty);
-            recyclerView.setAdapter(adapter);
-        }else {
-            CategoryAdapter adapter = new CategoryAdapter(items);
-            adapter.setOnItemClickListener(this);
-            recyclerView.setAdapter(adapter);
+        ApiClient apiClient = new ApiClient(getContext(), CATEGORY_ITEMS_REQUEST, this, this);
+        EmptyAdapter adapter = new EmptyAdapter();
+        recyclerView.setAdapter(adapter);
+        apiClient.requestCategoryList(appointedCategory);
+    }
+
+    @Override
+    public void onDataLoaded(Object data, int requestCode) {
+        if(requestCode == CATEGORY_ITEMS_REQUEST){
+
+            List<Article> items = (List<Article>) data;
+
+            if(items.isEmpty()){
+                EmptyAdapter adapter = new EmptyAdapter(getString(R.string.msg_empty),R.drawable.ic_empty);
+                recyclerView.setAdapter(adapter);
+            }else {
+                CategoryAdapter adapter = new CategoryAdapter(items);
+                adapter.setOnItemClickListener(this);
+                recyclerView.setAdapter(adapter);
+            }
         }
     }
 
     @Override
-    public void onFailure(String msg) {
-        EmptyAdapter adapter = new EmptyAdapter(msg,R.drawable.ic_warning);
-        recyclerView.setAdapter(adapter);
-    }
-
-    public boolean isOnline() {
-        ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
+    public void onFailure(String msg, int requestCode) {
+        if(requestCode == CATEGORY_ITEMS_REQUEST){
+            EmptyAdapter adapter = new EmptyAdapter(msg,R.drawable.ic_warning);
+            recyclerView.setAdapter(adapter);
+        }
     }
 
     @Override
@@ -88,9 +80,7 @@ public class CategoryFragment extends Fragment implements ApiClient.OnResponseLi
         intent.putExtra(getString(R.string.article_pass_id),id);
         intent.putExtra(getString(R.string.article_pass_type),appointedCategory);
 
-        if(isOnline()){
-            startActivity(intent);
-        }
+        startActivity(intent);
     }
 }
 
