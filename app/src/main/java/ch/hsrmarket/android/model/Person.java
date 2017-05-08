@@ -43,6 +43,15 @@ public class Person {
         this.admin = admin;
     }
 
+    public Person(String email, String password){
+        this.email = email;
+        this.password = password;
+    }
+
+    public Person(int id){
+        this.id = id;
+    }
+
     public int getId() {
         return id;
     }
@@ -113,5 +122,20 @@ public class Person {
 
     public void setAdmin(boolean admin) {
         this.admin = admin;
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "id=" + id +
+                ", studentId=" + studentId +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", address=" + address +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", password='" + password + '\'' +
+                ", admin=" + admin +
+                '}';
     }
 }

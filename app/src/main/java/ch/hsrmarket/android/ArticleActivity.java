@@ -1,5 +1,7 @@
 package ch.hsrmarket.android;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -180,9 +182,9 @@ public class ArticleActivity extends AppCompatActivity implements ApiClient.OnRe
         switch (v.getId()){
             case R.id.fab_buy:
 
-                //TODO remove it
-                Address address = new Address("","",0,"");
-                Person person = new Person(30,0,"","",address,"","","",false);
+                SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_credentials), Context.MODE_PRIVATE);
+                int personId = sharedPref.getInt(getString(R.string.login_person_id),-1);
+                Person person = new Person(personId);
 
                 ApiClient apiClient = new ApiClient(getApplicationContext(),PURCHASE_POST,this,this);
                 apiClient.createPurchase(currentArticle,person);
