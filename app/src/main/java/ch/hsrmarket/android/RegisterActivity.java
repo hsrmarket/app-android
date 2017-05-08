@@ -1,5 +1,7 @@
 package ch.hsrmarket.android;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
@@ -8,8 +10,13 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
-public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
+import ch.hsrmarket.android.api.ApiClient;
+import ch.hsrmarket.android.model.Address;
+import ch.hsrmarket.android.model.Person;
+
+public class RegisterActivity extends AppCompatActivity implements View.OnClickListener, ApiClient.OnResponseListener, ApiClient.OnFailureListener {
 
     private TextInputEditText etStudentId, etFirstName, etLastName, etStreet, etStreetNo,
             etZip, etCity, etPhone, etEmail, etPassword, etPasswordConfirm;
@@ -45,10 +52,16 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         switch (v.getId()){
             case R.id.register_send:
 
-                EditText[] others = new EditText[]{etStudentId,etFirstName,etLastName,etStreet,etStreetNo,etZip,etCity,etPhone};
-                isEmpty(others);
-                isValidEmail(etEmail);
-                isPasswordOK(etPassword,etPasswordConfirm);
+                EditText[] others = new EditText[]{etStudentId,etFirstName,etLastName,etStreet,etStreetNo,etZip,etCity,etPhone,etEmail,etPassword};
+
+                if(!isEmpty(others) && isValidEmail(etEmail) && isPasswordOK(etPassword,etPasswordConfirm)){
+                    ApiClient apiClient = new ApiClient(getApplicationContext(),0,this,this);
+
+                    String hash = LoginActivity.getHash(getString(etPassword));
+                    Person person = new Person(getInt(etStudentId),getString(etFirstName),getString(etLastName),getAddress(etStreet,etStreetNo,etZip,etCity), getString(etPhone), getString(etEmail), hash);
+
+                    apiClient.createPerson(person);
+                }
 
                 break;
         }
@@ -93,5 +106,36 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         }
 
         return  true;
+    }
+
+    private Address getAddress(EditText street, EditText streetNo, EditText zip, EditText city){
+        return new Address(getString(street),getString(streetNo),getInt(zip),getString(city));
+    }
+
+    private String getString(EditText editText){
+        return editText.getText().toString();
+    }
+
+    private int getInt(EditText editText){
+        return Integer.parseInt(editText.getText().toString());
+    }
+
+    @Override
+    public void onDataLoaded(Object data, int requestCode) {
+        Person person = (Person) data;
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_credentials), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        editor.putInt(getString(R.string.login_person_id), person.getId());
+        editor.putString(getString(R.string.login_person_email), person.getEmail());
+        editor.putString(getString(R.string.login_person_password), LoginActivity.getHash(etPassword.getText().toString()));
+        editor.commit();
+
+        finish();
+    }
+
+    @Override
+    public void onFailure(String msg, int requestCode) {
+        Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
     }
 }

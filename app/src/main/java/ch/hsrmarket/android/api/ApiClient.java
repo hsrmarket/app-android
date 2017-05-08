@@ -237,6 +237,22 @@ public class ApiClient {
 
     }
 
+    public void createPerson(final Person person){
+        execute(new OnInternetReady() {
+            @Override
+            public void httpRequest() {
+                httpClient
+                        .newCall(makePostRequest("/accounts",person))
+                        .enqueue(defaultCallback(new OnJsonReady() {
+                            @Override
+                            public Object parse(Response response) {
+                                return gson.fromJson(response.body().charStream(),Person.class);
+                            }
+                        }));
+            }
+        });
+    }
+
     public void checkCredentials(String email, String password){
 
         final Person person = new Person(email,password);

@@ -43,6 +43,17 @@ public class Person {
         this.admin = admin;
     }
 
+    public Person(int studentId, String firstName, String lastName, Address address, String phone, String email, String password) {
+        this.studentId = studentId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.address = address;
+        this.email = email;
+        this.phone = phone;
+        this.password = password;
+        this.admin = false;
+    }
+
     public Person(String email, String password){
         this.email = email;
         this.password = password;

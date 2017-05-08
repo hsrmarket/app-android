@@ -103,6 +103,7 @@
 
                     android:id="@+id/register_streetNo"
                     android:inputType="text"
+                    android:nextFocusDown="@+id/register_zip"
                     />
 
             </android.support.design.widget.TextInputLayout>

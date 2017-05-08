@@ -43,7 +43,7 @@
     <string name="msg_successful_purchased">Your purchase is successful.</string>
     <string name="msg_no_internet">There is no Internet connection available. Please check your Internet connection.</string>
     <string name="msg_listview_empty">No articles in this category available.</string>
-    <string name="msg_fail_login">invalid login credentials</string>
+    <string name="msg_fail_login">Your email or password is invalid. Please try again.</string>
     <string name="msg_form_empty">It can\'t be empty.</string>
     <string name="msg_form_invalid_email">It is an invalid email.</string>
     <string name="msg_form_password_length">It must be at least 8 Characters.</string>

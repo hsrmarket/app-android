@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.security.MessageDigest;
 
@@ -18,8 +19,6 @@ import ch.hsrmarket.android.model.Person;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener, ApiClient.OnResponseListener, ApiClient.OnFailureListener {
 
     private TextInputEditText etEmail, etPassword;
-
-    public static final int LOGIN_REQUEST = 13;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +40,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.login_send:
-                ApiClient apiClient = new ApiClient(getApplicationContext(),LOGIN_REQUEST,this,this);
+                ApiClient apiClient = new ApiClient(getApplicationContext(),0,this,this);
                 String hash = getHash(etPassword.getText().toString());
                 apiClient.checkCredentials(etEmail.getText().toString(), hash);
 
@@ -55,7 +54,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private String getHash(String plaintext){
+    protected static String getHash(String plaintext){
         try{
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(plaintext.getBytes("UTF-8"));
@@ -75,8 +74,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onDataLoaded(Object data, int requestCode) {
-        if(requestCode == LOGIN_REQUEST){
-
             Person person = (Person) data;
             SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_credentials),Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();
@@ -87,14 +84,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             editor.commit();
 
             finish();
-
-        }
     }
 
     @Override
     public void onFailure(String msg, int requestCode) {
-        if(requestCode == LOGIN_REQUEST){
-            etPassword.setError(getString(R.string.msg_fail_login));
+        String finalMsg;
+        if(msg.contains("Response{")){
+            finalMsg = getString(R.string.msg_fail_login);
+        }else{
+            finalMsg = msg;
         }
+        Toast.makeText(getApplicationContext(),finalMsg,Toast.LENGTH_LONG).show();
     }
 }
