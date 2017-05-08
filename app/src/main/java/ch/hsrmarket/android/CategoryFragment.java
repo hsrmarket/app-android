@@ -54,7 +54,7 @@ public class CategoryFragment extends Fragment implements ApiClient.OnResponseLi
             List<Article> items = (List<Article>) data;
 
             if(items.isEmpty()){
-                EmptyAdapter adapter = new EmptyAdapter(getString(R.string.msg_empty),R.drawable.ic_empty);
+                EmptyAdapter adapter = new EmptyAdapter(getString(R.string.msg_listview_empty),R.drawable.ic_empty);
                 recyclerView.setAdapter(adapter);
             }else {
                 CategoryAdapter adapter = new CategoryAdapter(items);

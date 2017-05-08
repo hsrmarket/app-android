@@ -1,6 +1,7 @@
 package ch.hsrmarket.android;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
@@ -48,7 +49,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             case R.id.login_register:
                 finish();
-                //TODO start RegisterActivity
+                startActivity(new Intent(getApplicationContext(),RegisterActivity.class));
 
                 break;
         }

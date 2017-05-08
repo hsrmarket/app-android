@@ -9,6 +9,7 @@
     <string name="description_empty_sign">The List is empty.</string>
     <string name="title_activity_article">Article</string>
     <string name="title_activity_login">Login</string>
+    <string name="title_activity_register">Register</string>
 
     <string name="article_name">Name</string>
     <string name="article_description">Description</string>
@@ -26,13 +27,27 @@
 
     <string name="login_send">Login</string>
     <string name="login_register">Register</string>
+
     <string name="register_email">Email</string>
     <string name="register_password">Password</string>
+    <string name="register_passwordConfirm">Confirm Password</string>
+    <string name="register_studentId">Student Id</string>
+    <string name="register_firstName">First Name</string>
+    <string name="register_lastName">Surname</string>
+    <string name="register_street">Street</string>
+    <string name="register_streetNo">No.</string>
+    <string name="register_city">City</string>
+    <string name="register_zip">ZIP Code</string>
+    <string name="register_phone">Phone No.</string>
 
     <string name="msg_successful_purchased">Your purchase is successful.</string>
     <string name="msg_no_internet">There is no Internet connection available. Please check your Internet connection.</string>
-    <string name="msg_empty">No articles in this category available.</string>
+    <string name="msg_listview_empty">No articles in this category available.</string>
     <string name="msg_fail_login">invalid login credentials</string>
+    <string name="msg_form_empty">It can\'t be empty.</string>
+    <string name="msg_form_invalid_email">It is an invalid email.</string>
+    <string name="msg_form_password_length">It must be at least 8 Characters.</string>
+    <string name="msg_form_password_match">It doesn\'t match with Password.</string>
 
     <!-- For programming purpose -->
     <string name="appointed_category">appointedCategory</string>
