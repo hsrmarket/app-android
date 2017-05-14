@@ -96,7 +96,11 @@ public class ApiClient {
 
                 }else{
                     Log.d(TAG,response.toString());
-                    Object parsedOne = onJsonReady.parse(response);
+                    Object parsedOne = null;
+
+                    if(onJsonReady != null) {
+                        parsedOne = onJsonReady.parse(response);
+                    }
                     fireScenario(parsedOne);
                 }
             }
@@ -227,15 +231,45 @@ public class ApiClient {
             public void httpRequest() {
                 httpClient
                         .newCall(makePostRequest("/purchases",purchase))
+                        .enqueue(defaultCallback(null));
+            }
+        });
+
+    }
+
+    public void createPerson(final Person person){
+        execute(new OnInternetReady() {
+            @Override
+            public void httpRequest() {
+                httpClient
+                        .newCall(makePostRequest("/accounts",person))
                         .enqueue(defaultCallback(new OnJsonReady() {
                             @Override
                             public Object parse(Response response) {
-                                return null;
+                                return gson.fromJson(response.body().charStream(),Person.class);
                             }
                         }));
             }
         });
+    }
 
+    public void checkCredentials(String email, String password){
+
+        final Person person = new Person(email,password);
+
+        execute(new OnInternetReady() {
+            @Override
+            public void httpRequest() {
+                httpClient.
+                        newCall(makePostRequest("/user/login",person)).
+                        enqueue(defaultCallback(new OnJsonReady() {
+                            @Override
+                            public Object parse(Response response) {
+                                return gson.fromJson(response.body().charStream(),Person.class);
+                            }
+                        }));
+            }
+        });
     }
 
     private void execute(OnInternetReady onInternetReady){

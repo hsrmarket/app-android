@@ -1,20 +1,17 @@
 package ch.hsrmarket.android;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import ch.hsrmarket.android.api.ApiClient;
-import ch.hsrmarket.android.model.Address;
 import ch.hsrmarket.android.model.Article;
 import ch.hsrmarket.android.model.Book;
 import ch.hsrmarket.android.model.ElectronicDevice;
@@ -180,9 +177,9 @@ public class ArticleActivity extends AppCompatActivity implements ApiClient.OnRe
         switch (v.getId()){
             case R.id.fab_buy:
 
-                //TODO remove it
-                Address address = new Address("","",0,"");
-                Person person = new Person(30,0,"","",address,"","","",false);
+                SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_credentials), Context.MODE_PRIVATE);
+                int personId = sharedPref.getInt(getString(R.string.login_person_id),-1);
+                Person person = new Person(personId);
 
                 ApiClient apiClient = new ApiClient(getApplicationContext(),PURCHASE_POST,this,this);
                 apiClient.createPurchase(currentArticle,person);
@@ -192,13 +189,4 @@ public class ArticleActivity extends AppCompatActivity implements ApiClient.OnRe
 
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 }

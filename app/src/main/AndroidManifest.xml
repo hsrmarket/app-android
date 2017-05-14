@@ -26,6 +26,19 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ch.hsrmarket.android.MainActivity" />
         </activity>
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/title_activity_login"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".RegisterActivity"
+            android:label="@string/title_activity_register"
+            android:parentActivityName=".LoginActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ch.hsrmarket.android.LoginActivity" />
+        </activity>
     </application>
 
 </manifest>
