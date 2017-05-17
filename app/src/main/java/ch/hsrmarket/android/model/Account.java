@@ -2,7 +2,7 @@ package ch.hsrmarket.android.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Person {
+public class Account {
 
     @SerializedName("id")
     private int id;
@@ -31,7 +31,7 @@ public class Person {
     @SerializedName("admin")
     private boolean admin;
 
-    public Person(int id, int studentId, String firstName, String lastName, Address address, String email, String phone, String password, boolean admin) {
+    public Account(int id, int studentId, String firstName, String lastName, Address address, String email, String phone, String password, boolean admin) {
         this.id = id;
         this.studentId = studentId;
         this.firstName = firstName;
@@ -43,7 +43,7 @@ public class Person {
         this.admin = admin;
     }
 
-    public Person(int studentId, String firstName, String lastName, Address address, String phone, String email, String password) {
+    public Account(int studentId, String firstName, String lastName, Address address, String phone, String email, String password) {
         this.studentId = studentId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -54,12 +54,12 @@ public class Person {
         this.admin = false;
     }
 
-    public Person(String email, String password){
+    public Account(String email, String password){
         this.email = email;
         this.password = password;
     }
 
-    public Person(int id){
+    public Account(int id){
         this.id = id;
     }
 
@@ -137,7 +137,7 @@ public class Person {
 
     @Override
     public String toString() {
-        return "Person{" +
+        return "Account{" +
                 "id=" + id +
                 ", studentId=" + studentId +
                 ", firstName='" + firstName + '\'' +

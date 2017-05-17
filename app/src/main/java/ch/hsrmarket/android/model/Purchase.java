@@ -11,7 +11,7 @@ public class Purchase {
     private Article article;
 
     @SerializedName("buyer")
-    private Person buyer;
+    private Account buyer;
 
     @SerializedName("purchaseDate")
     private String date;
@@ -19,7 +19,7 @@ public class Purchase {
     @SerializedName("completed")
     private boolean completed;
 
-    public Purchase(int id, Article article, Person buyer, String date, boolean completed) {
+    public Purchase(int id, Article article, Account buyer, String date, boolean completed) {
         this.id = id;
         this.article = article;
         this.buyer = buyer;
@@ -43,11 +43,11 @@ public class Purchase {
         this.article = article;
     }
 
-    public Person getBuyer() {
+    public Account getBuyer() {
         return buyer;
     }
 
-    public void setBuyer(Person buyer) {
+    public void setBuyer(Account buyer) {
         this.buyer = buyer;
     }
 

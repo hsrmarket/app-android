@@ -14,7 +14,7 @@ import android.widget.Toast;
 import java.security.MessageDigest;
 
 import ch.hsrmarket.android.api.ApiClient;
-import ch.hsrmarket.android.model.Person;
+import ch.hsrmarket.android.model.Account;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener, ApiClient.OnResponseListener, ApiClient.OnFailureListener {
 
@@ -26,6 +26,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         etEmail = (TextInputEditText) findViewById(R.id.login_email);
         etPassword = (TextInputEditText) findViewById(R.id.login_password);
@@ -74,12 +75,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onDataLoaded(Object data, int requestCode) {
-            Person person = (Person) data;
+            Account account = (Account) data;
             SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_credentials),Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();
 
-            editor.putInt(getString(R.string.login_person_id), person.getId());
-            editor.putString(getString(R.string.login_person_email), person.getEmail());
+            editor.putInt(getString(R.string.login_person_id), account.getId());
+            editor.putString(getString(R.string.login_person_email), account.getEmail());
             editor.putString(getString(R.string.login_person_password),getHash(etPassword.getText().toString()));
             editor.commit();
 

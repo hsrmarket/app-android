@@ -47,21 +47,6 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_credentials),Context.MODE_PRIVATE);
-        int personId = sharedPref.getInt(getString(R.string.login_person_id),-1);
-        String email = sharedPref.getString(getString(R.string.login_person_email),"");
-        String password = sharedPref.getString(getString(R.string.login_person_password),"");
-
-        if(personId == -1 || email.matches("") || password.matches("")){
-            startActivity(new Intent(getApplicationContext(),LoginActivity.class));
-        }
-
-    }
-
     private String getTabName(Article.Type type){
         switch (type){
             case BOOK:

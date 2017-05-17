@@ -13,8 +13,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import ch.hsrmarket.android.api.ApiClient;
+import ch.hsrmarket.android.model.Account;
 import ch.hsrmarket.android.model.Address;
-import ch.hsrmarket.android.model.Person;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener, ApiClient.OnResponseListener, ApiClient.OnFailureListener {
 
@@ -58,9 +58,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     ApiClient apiClient = new ApiClient(getApplicationContext(),0,this,this);
 
                     String hash = LoginActivity.getHash(getString(etPassword));
-                    Person person = new Person(getInt(etStudentId),getString(etFirstName),getString(etLastName),getAddress(etStreet,etStreetNo,etZip,etCity), getString(etPhone), getString(etEmail), hash);
+                    Account account = new Account(getInt(etStudentId),getString(etFirstName),getString(etLastName),getAddress(etStreet,etStreetNo,etZip,etCity), getString(etPhone), getString(etEmail), hash);
 
-                    apiClient.createPerson(person);
+                    apiClient.createPerson(account);
                 }
 
                 break;
@@ -122,12 +122,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onDataLoaded(Object data, int requestCode) {
-        Person person = (Person) data;
+        Account account = (Account) data;
         SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_credentials), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
 
-        editor.putInt(getString(R.string.login_person_id), person.getId());
-        editor.putString(getString(R.string.login_person_email), person.getEmail());
+        editor.putInt(getString(R.string.login_person_id), account.getId());
+        editor.putString(getString(R.string.login_person_email), account.getEmail());
         editor.putString(getString(R.string.login_person_password), LoginActivity.getHash(etPassword.getText().toString()));
         editor.commit();
 

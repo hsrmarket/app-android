@@ -20,10 +20,10 @@ import java.util.List;
 import ch.hsrmarket.android.R;
 import ch.hsrmarket.android.model.Article;
 import ch.hsrmarket.android.model.Book;
-import ch.hsrmarket.android.model.ElectronicDevice;
+import ch.hsrmarket.android.model.Electronic;
 import ch.hsrmarket.android.model.OfficeSupply;
 import ch.hsrmarket.android.model.Other;
-import ch.hsrmarket.android.model.Person;
+import ch.hsrmarket.android.model.Account;
 import ch.hsrmarket.android.model.Purchase;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -197,7 +197,7 @@ public class ApiClient {
                                         break;
 
                                     case ELECTRONIC_DEVICE:
-                                        targetClass = ElectronicDevice.class;
+                                        targetClass = Electronic.class;
                                         break;
 
                                     case OFFICE_SUPPLY:
@@ -219,12 +219,12 @@ public class ApiClient {
         });
     }
 
-    public void createPurchase(Article article, Person person){
+    public void createPurchase(Article article, Account account){
 
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String formattedDate = dateFormat.format(calendar.getTime());
-        final Purchase purchase = new Purchase(0,article,person,formattedDate,false);
+        final Purchase purchase = new Purchase(0,article, account,formattedDate,false);
 
         execute(new OnInternetReady() {
             @Override
@@ -237,16 +237,16 @@ public class ApiClient {
 
     }
 
-    public void createPerson(final Person person){
+    public void createPerson(final Account account){
         execute(new OnInternetReady() {
             @Override
             public void httpRequest() {
                 httpClient
-                        .newCall(makePostRequest("/accounts",person))
+                        .newCall(makePostRequest("/accounts", account))
                         .enqueue(defaultCallback(new OnJsonReady() {
                             @Override
                             public Object parse(Response response) {
-                                return gson.fromJson(response.body().charStream(),Person.class);
+                                return gson.fromJson(response.body().charStream(),Account.class);
                             }
                         }));
             }
@@ -255,17 +255,17 @@ public class ApiClient {
 
     public void checkCredentials(String email, String password){
 
-        final Person person = new Person(email,password);
+        final Account account = new Account(email,password);
 
         execute(new OnInternetReady() {
             @Override
             public void httpRequest() {
                 httpClient.
-                        newCall(makePostRequest("/user/login",person)).
+                        newCall(makePostRequest("/user/login", account)).
                         enqueue(defaultCallback(new OnJsonReady() {
                             @Override
                             public Object parse(Response response) {
-                                return gson.fromJson(response.body().charStream(),Person.class);
+                                return gson.fromJson(response.body().charStream(),Account.class);
                             }
                         }));
             }

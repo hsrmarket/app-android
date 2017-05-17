@@ -12,10 +12,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import ch.hsrmarket.android.api.ApiClient;
+import ch.hsrmarket.android.model.Account;
 import ch.hsrmarket.android.model.Article;
 import ch.hsrmarket.android.model.Book;
-import ch.hsrmarket.android.model.ElectronicDevice;
-import ch.hsrmarket.android.model.Person;
+import ch.hsrmarket.android.model.Electronic;
 
 public class ArticleActivity extends AppCompatActivity implements ApiClient.OnResponseListener, View.OnClickListener, ApiClient.OnFailureListener {
 
@@ -123,7 +123,7 @@ public class ArticleActivity extends AppCompatActivity implements ApiClient.OnRe
                 break;
 
             case ELECTRONIC_DEVICE:
-                ElectronicDevice electronicDevice = (ElectronicDevice) data;
+                Electronic electronic = (Electronic) data;
 
                 etExtra1 = (TextInputEditText) findViewById(R.id.article_extra1);
                 etExtra2 = (TextInputEditText) findViewById(R.id.article_extra2);
@@ -140,7 +140,7 @@ public class ArticleActivity extends AppCompatActivity implements ApiClient.OnRe
                 hints = new String[]{getString(R.string.article_producer), getString(R.string.article_model)};
                 setHint(extraHintsLayouts, hints);
 
-                extraTexts = new String[]{electronicDevice.getProducer(),electronicDevice.getModel()};
+                extraTexts = new String[]{electronic.getProducer(), electronic.getModel()};
                 setText(extraViews,extraTexts);
 
                 break;
@@ -179,10 +179,15 @@ public class ArticleActivity extends AppCompatActivity implements ApiClient.OnRe
 
                 SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_credentials), Context.MODE_PRIVATE);
                 int personId = sharedPref.getInt(getString(R.string.login_person_id),-1);
-                Person person = new Person(personId);
 
-                ApiClient apiClient = new ApiClient(getApplicationContext(),PURCHASE_POST,this,this);
-                apiClient.createPurchase(currentArticle,person);
+                if(personId != -1){
+                    Account account = new Account(personId);
+                    ApiClient apiClient = new ApiClient(getApplicationContext(),PURCHASE_POST,this,this);
+                    apiClient.createPurchase(currentArticle, account);
+
+                }else{
+                    //TODO show message to login
+                }
 
                 break;
         }

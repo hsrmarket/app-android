@@ -3,7 +3,7 @@ package ch.hsrmarket.android.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class ElectronicDevice extends Article {
+public class Electronic extends Article {
 
     @SerializedName("producer")
     private String producer;
@@ -11,7 +11,7 @@ public class ElectronicDevice extends Article {
     @SerializedName("model")
     private String model;
 
-    public ElectronicDevice(int id, String name, double price, int condition, String description, String createdAt, String imagePath, Type type, String producer, String model) {
+    public Electronic(int id, String name, double price, int condition, String description, String createdAt, String imagePath, Type type, String producer, String model) {
         super(id, name, price, condition, description, createdAt, imagePath, type);
         this.producer = producer;
         this.model = model;
@@ -35,7 +35,7 @@ public class ElectronicDevice extends Article {
 
     @Override
     public String toString() {
-        return "ElectronicDevice{" +
+        return "Electronic{" +
                 "producer='" + producer + '\'' +
                 ", model='" + model + '\'' +
                 "} " + super.toString();
