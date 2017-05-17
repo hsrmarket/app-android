@@ -13,18 +13,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import ch.hsrmarket.android.adapter.ViewPagerAdapter;
+import ch.hsrmarket.android.model.Account;
 import ch.hsrmarket.android.model.Article;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawer;
-    private  NavigationView navigationView;
+    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +65,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
     }
 
     @Override
@@ -73,10 +75,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_credentials), Context.MODE_PRIVATE);
         String accountJson = sharedPref.getString(getString(R.string.secret_account),"");
 
+        View navHead = navigationView.getHeaderView(0);
+        TextView navName = (TextView) navHead.findViewById(R.id.nav_name);
+        TextView navEmail = (TextView) navHead.findViewById(R.id.nav_email);
+
         if(accountJson.length() == 0){
             navigationView.inflateMenu(R.menu.drawer_logged_out);
+
+            navName.setText("");
+            navEmail.setText("");
         }else {
             navigationView.inflateMenu(R.menu.drawer_logged_in);
+
+            Account account = Account.makeAccount(accountJson);
+            navName.setText(account.getFirstName()+ " " +account.getLastName());
+            navEmail.setText(account.getEmail());
         }
 
         navigationView.setCheckedItem(R.id.nav_home);
@@ -117,7 +130,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }else if(id == R.id.nav_logout){
             SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_credentials),Context.MODE_PRIVATE);
             sharedPref.edit().clear().commit();
-
 
             onStart();
         }
