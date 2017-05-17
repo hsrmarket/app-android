@@ -24,6 +24,7 @@ import ch.hsrmarket.android.model.Article;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawer;
+    private  NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,12 +60,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // TODO if(logged out)
-        navigationView.inflateMenu(R.menu.drawer_logged_out);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        navigationView.getMenu().clear();
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_credentials), Context.MODE_PRIVATE);
+        String accountJson = sharedPref.getString(getString(R.string.secret_account),"");
+
+        if(accountJson.length() == 0){
+            navigationView.inflateMenu(R.menu.drawer_logged_out);
+        }else {
+            navigationView.inflateMenu(R.menu.drawer_logged_in);
+        }
+
         navigationView.setCheckedItem(R.id.nav_home);
+
     }
 
     private String getTabName(Article.Type type){
@@ -97,19 +113,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (id == R.id.nav_login) {
             startActivity(new Intent(getApplicationContext(),LoginActivity.class));
+
+        }else if(id == R.id.nav_logout){
+            SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_credentials),Context.MODE_PRIVATE);
+            sharedPref.edit().clear().commit();
+
+
+            onStart();
         }
-//        } else if (id == R.id.nav_gallery) {
-//
-//        } else if (id == R.id.nav_slideshow) {
-//
-//        } else if (id == R.id.nav_manage) {
-//
-//        } else if (id == R.id.nav_share) {
-//
-//        } else if (id == R.id.nav_send) {
-//        }
 
         drawer.closeDrawer(GravityCompat.START);
-        return true;
+        return false;
+
     }
 }

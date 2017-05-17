@@ -1,6 +1,9 @@
 package ch.hsrmarket.android.model;
 
+import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+
+import ch.hsrmarket.android.api.GsonClient;
 
 public class Account {
 
@@ -148,5 +151,15 @@ public class Account {
                 ", password='" + password + '\'' +
                 ", admin=" + admin +
                 '}';
+    }
+
+    public String getJsonObject(){
+        Gson gson = GsonClient.getClient();
+        return  gson.toJson(this);
+    }
+
+    public static Account makeAccount(String json){
+        Gson gson = GsonClient.getClient();
+        return gson.fromJson(json,Account.class);
     }
 }

@@ -126,9 +126,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_credentials), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
 
-        editor.putInt(getString(R.string.login_person_id), account.getId());
-        editor.putString(getString(R.string.login_person_email), account.getEmail());
-        editor.putString(getString(R.string.login_person_password), LoginActivity.getHash(etPassword.getText().toString()));
+        editor.putString(getString(R.string.secret_account), account.getJsonObject());
         editor.commit();
 
         finish();
