@@ -43,10 +43,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ch.hsrmarket.android.LoginActivity" />
         </activity>
-        <activity
-            android:name=".ElfeActivity"
-            android:label="@string/title_activity_elfe"
-            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>
