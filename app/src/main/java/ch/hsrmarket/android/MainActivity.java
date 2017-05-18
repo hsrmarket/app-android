@@ -122,17 +122,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
+        Intent myIntent = new Intent(getApplicationContext(),MyListActivity.class);
 
-        if (id == R.id.nav_login) {
-            startActivity(new Intent(getApplicationContext(),LoginActivity.class));
+        switch (id){
+            case R.id.nav_login:
+                startActivity(new Intent(getApplicationContext(),LoginActivity.class));
+                break;
 
-        }else if(id == R.id.nav_logout){
-            SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_credentials),Context.MODE_PRIVATE);
-            sharedPref.edit().clear().commit();
+            case R.id.nav_logout:
+                SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_credentials),Context.MODE_PRIVATE);
+                sharedPref.edit().clear().commit();
 
-            onStart();
-        }else if(id == R.id.nav_articles){
-            startActivity(new Intent(getApplicationContext(),MyListActivity.class));
+                onStart();
+                break;
+
+            case R.id.nav_articles:
+                myIntent.putExtra(getString(R.string.appointed_mylist),R.id.nav_articles);
+                startActivity(myIntent);
+                break;
+
+            case R.id.nav_sales:
+                myIntent.putExtra(getString(R.string.appointed_mylist),R.id.nav_sales);
+                startActivity(myIntent);
+                break;
+
+            case R.id.nav_purchases:
+                myIntent.putExtra(getString(R.string.appointed_mylist),R.id.nav_purchases);
+                startActivity(myIntent);
+                break;
         }
 
         drawer.closeDrawer(GravityCompat.START);

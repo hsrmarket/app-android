@@ -1,6 +1,7 @@
 <resources>
     <!-- For programming purpose -->
     <string name="appointed_category">appointedCategory</string>
+    <string name="appointed_mylist">appointedMylist</string>
     <string name="article_pass_id">requestedId</string>
     <string name="article_pass_type">requestedType</string>
 

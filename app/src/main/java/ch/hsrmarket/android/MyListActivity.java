@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -14,18 +16,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import ch.hsrmarket.android.api.ApiClient;
 import ch.hsrmarket.android.model.Account;
+import ch.hsrmarket.android.model.Article;
 
 public class MyListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawer;
     private NavigationView navigationView;
+    private int appointedMyList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_list);
+        setContentView(R.layout.activity_mylist);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -39,9 +42,8 @@ public class MyListActivity extends AppCompatActivity implements NavigationView.
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.inflateMenu(R.menu.drawer_logged_in);
 
-        //TODO receive a parameter
-        //TODO set accordingly right menu
-        navigationView.setCheckedItem(R.id.nav_articles);
+        int receivedMyList = getIntent().getIntExtra(getString(R.string.appointed_mylist),-1);
+        navigationView.setCheckedItem(receivedMyList);
 
         SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_credentials), Context.MODE_PRIVATE);
         String accountJson = sharedPref.getString(getString(R.string.secret_account),"");
@@ -53,6 +55,25 @@ public class MyListActivity extends AppCompatActivity implements NavigationView.
             setHeaderTexts(currentAccount.getFullName(), currentAccount.getEmail());
         }
 
+        setFragment(receivedMyList);
+
+    }
+
+    private void setFragment(int myId){
+        if(appointedMyList != myId){
+            FragmentManager fragmentManager = getSupportFragmentManager();
+
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(getString(R.string.appointed_category), Article.Type.BOOK);
+            CategoryFragment fragment = new CategoryFragment();
+            fragment.setArguments(bundle);
+
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.my_list_layout,fragment);
+            fragmentTransaction.commit();
+
+            appointedMyList = myId;
+        }
     }
 
     @Override
@@ -67,18 +88,38 @@ public class MyListActivity extends AppCompatActivity implements NavigationView.
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
+        boolean retVal = false;
 
-        if(id == R.id.nav_logout){
-            SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_credentials),Context.MODE_PRIVATE);
-            sharedPref.edit().clear().commit();
+        switch (id){
+            case R.id.nav_logout:
+                SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_credentials),Context.MODE_PRIVATE);
+                sharedPref.edit().clear().commit();
 
-            finish();
-        }else if(id == R.id.nav_home){
-            startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                finish();
+                break;
+
+            case R.id.nav_home:
+                startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                break;
+
+            case R.id.nav_articles:
+                setFragment(R.id.nav_articles);
+                retVal = true;
+                break;
+
+            case R.id.nav_sales:
+                setFragment(R.id.nav_sales);
+                retVal = true;
+                break;
+
+            case R.id.nav_purchases:
+                setFragment(R.id.nav_purchases);
+                retVal = true;
+                break;
         }
 
         drawer.closeDrawer(GravityCompat.START);
-        return false;
+        return retVal;
 
     }
 
