@@ -1,6 +1,7 @@
 package ch.hsrmarket.android;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -12,10 +13,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import ch.hsrmarket.android.api.ApiClient;
+import ch.hsrmarket.android.model.Account;
 import ch.hsrmarket.android.model.Article;
 import ch.hsrmarket.android.model.Book;
-import ch.hsrmarket.android.model.ElectronicDevice;
-import ch.hsrmarket.android.model.Person;
+import ch.hsrmarket.android.model.Electronic;
 
 public class ArticleActivity extends AppCompatActivity implements ApiClient.OnResponseListener, View.OnClickListener, ApiClient.OnFailureListener {
 
@@ -123,7 +124,7 @@ public class ArticleActivity extends AppCompatActivity implements ApiClient.OnRe
                 break;
 
             case ELECTRONIC_DEVICE:
-                ElectronicDevice electronicDevice = (ElectronicDevice) data;
+                Electronic electronic = (Electronic) data;
 
                 etExtra1 = (TextInputEditText) findViewById(R.id.article_extra1);
                 etExtra2 = (TextInputEditText) findViewById(R.id.article_extra2);
@@ -140,7 +141,7 @@ public class ArticleActivity extends AppCompatActivity implements ApiClient.OnRe
                 hints = new String[]{getString(R.string.article_producer), getString(R.string.article_model)};
                 setHint(extraHintsLayouts, hints);
 
-                extraTexts = new String[]{electronicDevice.getProducer(),electronicDevice.getModel()};
+                extraTexts = new String[]{electronic.getProducer(), electronic.getModel()};
                 setText(extraViews,extraTexts);
 
                 break;
@@ -178,11 +179,17 @@ public class ArticleActivity extends AppCompatActivity implements ApiClient.OnRe
             case R.id.fab_buy:
 
                 SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_credentials), Context.MODE_PRIVATE);
-                int personId = sharedPref.getInt(getString(R.string.login_person_id),-1);
-                Person person = new Person(personId);
+                String accountJson = sharedPref.getString(getString(R.string.secret_account),"");
 
-                ApiClient apiClient = new ApiClient(getApplicationContext(),PURCHASE_POST,this,this);
-                apiClient.createPurchase(currentArticle,person);
+                if(accountJson.length() != 0){
+                    Account account = Account.makeAccount(accountJson);
+                    ApiClient apiClient = new ApiClient(getApplicationContext(),PURCHASE_POST,this,this);
+                    apiClient.createPurchase(currentArticle, account);
+
+                }else{
+                    Toast.makeText(getApplicationContext(),getString(R.string.msg_login_first),Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(getApplicationContext(),LoginActivity.class));
+                }
 
                 break;
         }

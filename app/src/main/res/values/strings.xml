@@ -1,4 +1,13 @@
 <resources>
+    <!-- For programming purpose -->
+    <string name="appointed_category">appointedCategory</string>
+    <string name="article_pass_id">requestedId</string>
+    <string name="article_pass_type">requestedType</string>
+
+    <string name="pref_credentials">accountData</string>
+    <string name="secret_account">accountJson</string>
+
+    <!-- For normal purpose -->
     <string name="app_name">HSRmarket</string>
 
     <string name="tab_books">Books</string>
@@ -48,15 +57,17 @@
     <string name="msg_form_invalid_email">It is an invalid email.</string>
     <string name="msg_form_password_length">It must be at least 8 Characters.</string>
     <string name="msg_form_password_match">It doesn\'t match with Password.</string>
+    <string name="msg_login_first">Please login first.</string>
 
-    <!-- For programming purpose -->
-    <string name="appointed_category">appointedCategory</string>
-    <string name="article_pass_id">requestedId</string>
-    <string name="article_pass_type">requestedType</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="pref_credentials">accountData</string>
-    <string name="login_person_id">accountId</string>
-    <string name="login_person_email">accountEmail</string>
-    <string name="login_person_password">accountPassword</string>
-
+    <string name="menu_home">Home</string>
+    <string name="menu_articles">My Articles</string>
+    <string name="menu_sales">My Sales</string>
+    <string name="menu_purchases">My Purchases</string>
+    <string name="menu_account">My Account</string>
+    <string name="menu_add_article">Add Article</string>
+    <string name="menu_logout">Logout</string>
+    <string name="menu_login">Login</string>
 </resources>
