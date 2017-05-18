@@ -83,12 +83,12 @@ public class CategoryFragment extends Fragment implements ApiClient.OnResponseLi
 
     @Override
     public void onClick(View view, int position) {
-        //TODO retrieve via Tag getType of Article
-        Integer id = (Integer) view.getTag();
+        Integer id = (Integer) view.getTag(R.integer.article_id);
+        Article.Type type = (Article.Type) view.getTag(R.integer.article_type);
 
         Intent intent = new Intent(getContext(),ArticleActivity.class);
         intent.putExtra(getString(R.string.article_pass_id),id);
-        intent.putExtra(getString(R.string.article_pass_type),appointedCategory);
+        intent.putExtra(getString(R.string.article_pass_type),type);
 
         startActivity(intent);
     }

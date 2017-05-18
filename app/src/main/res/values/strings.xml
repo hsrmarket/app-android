@@ -8,6 +8,9 @@
 
     <string name="pref_credentials">accountData</string>
     <string name="secret_account">accountJson</string>
+    
+    <integer name="article_id">13</integer>
+    <integer name="article_type">21</integer>
 
     <!-- For normal purpose -->
     <string name="app_name">HSRmarket</string>

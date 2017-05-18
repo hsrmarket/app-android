@@ -35,7 +35,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     public void onBindViewHolder(CategoryViewHolder holder, int position) {
         Article article = data.get(position);
 
-        holder.root.setTag(article.getId());
+        holder.root.setTag(R.integer.article_id,article.getId());
+        holder.root.setTag(R.integer.article_type,article.getType());
 
         holder.name.setText(article.getName());
         holder.price.setText( article.getPrice());
