@@ -2,6 +2,7 @@
     <!-- For programming purpose -->
     <string name="appointed_category">appointedCategory</string>
     <string name="appointed_mylist">appointedMylist</string>
+    <string name="account_pass_id">accountId</string>
     <string name="article_pass_id">requestedId</string>
     <string name="article_pass_type">requestedType</string>
 
@@ -22,6 +23,10 @@
     <string name="title_activity_login">Login</string>
     <string name="title_activity_register">Register</string>
     <string name="title_activity_my_list">MyListActivity</string>
+    <string name="title_articles">My Articles</string>
+    <string name="title_sales">My Sales</string>
+    <string name="title_purchases">My Purchases</string>
+
 
     <string name="article_name">Name</string>
     <string name="article_description">Description</string>
@@ -54,7 +59,7 @@
 
     <string name="msg_successful_purchased">Your purchase is successful.</string>
     <string name="msg_no_internet">There is no Internet connection available. Please check your Internet connection.</string>
-    <string name="msg_listview_empty">No articles in this category available.</string>
+    <string name="msg_listview_empty">No articles available.</string>
     <string name="msg_fail_login">Your email or password is invalid. Please try again.</string>
     <string name="msg_form_empty">It can\'t be empty.</string>
     <string name="msg_form_invalid_email">It is an invalid email.</string>

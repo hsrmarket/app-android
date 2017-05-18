@@ -24,6 +24,7 @@ public class MyListActivity extends AppCompatActivity implements NavigationView.
     private DrawerLayout drawer;
     private NavigationView navigationView;
     private int appointedMyList;
+    private int accountId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,10 +54,10 @@ public class MyListActivity extends AppCompatActivity implements NavigationView.
         }else {
             Account currentAccount = Account.makeAccount(accountJson);
             setHeaderTexts(currentAccount.getFullName(), currentAccount.getEmail());
+            accountId = currentAccount.getId();
         }
 
         setFragment(receivedMyList);
-
     }
 
     private void setFragment(int myId){
@@ -64,7 +65,8 @@ public class MyListActivity extends AppCompatActivity implements NavigationView.
             FragmentManager fragmentManager = getSupportFragmentManager();
 
             Bundle bundle = new Bundle();
-            bundle.putSerializable(getString(R.string.appointed_category), Article.Type.BOOK);
+            bundle.putInt(getString(R.string.appointed_mylist),myId);
+            bundle.putInt(getString(R.string.account_pass_id),accountId);
             CategoryFragment fragment = new CategoryFragment();
             fragment.setArguments(bundle);
 
@@ -72,6 +74,7 @@ public class MyListActivity extends AppCompatActivity implements NavigationView.
             fragmentTransaction.replace(R.id.my_list_layout,fragment);
             fragmentTransaction.commit();
 
+            setTitle(getTitle(myId));
             appointedMyList = myId;
         }
     }
@@ -120,7 +123,22 @@ public class MyListActivity extends AppCompatActivity implements NavigationView.
 
         drawer.closeDrawer(GravityCompat.START);
         return retVal;
+    }
 
+    private String getTitle(int myId){
+        switch (myId){
+            case R.id.nav_articles:
+                return getString(R.string.title_articles);
+
+            case R.id.nav_sales:
+                return getString(R.string.title_sales);
+
+            case R.id.nav_purchases:
+                return getString(R.string.title_purchases);
+
+            default:
+                throw new AssertionError("Forgot to implement");
+        }
     }
 
     private void setHeaderTexts(String name, String email){

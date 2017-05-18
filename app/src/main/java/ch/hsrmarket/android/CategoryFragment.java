@@ -21,6 +21,8 @@ public class CategoryFragment extends Fragment implements ApiClient.OnResponseLi
 
     private RecyclerView recyclerView;
     private Article.Type appointedCategory;
+    private int appointedMyList;
+    private int accountId;
 
     public static final int CATEGORY_ITEMS_REQUEST = 3;
 
@@ -29,6 +31,8 @@ public class CategoryFragment extends Fragment implements ApiClient.OnResponseLi
 
         Bundle bundle = getArguments();
         appointedCategory = (Article.Type) bundle.getSerializable(getString(R.string.appointed_category));
+        appointedMyList = bundle.getInt(getString(R.string.appointed_mylist),-1);
+        accountId = bundle.getInt(getString(R.string.account_pass_id),-1);
 
         recyclerView = (RecyclerView) root.findViewById(R.id.listCategory);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
@@ -44,7 +48,12 @@ public class CategoryFragment extends Fragment implements ApiClient.OnResponseLi
         ApiClient apiClient = new ApiClient(getContext(), CATEGORY_ITEMS_REQUEST, this, this);
         EmptyAdapter adapter = new EmptyAdapter();
         recyclerView.setAdapter(adapter);
-        apiClient.requestCategoryList(appointedCategory);
+
+        if(appointedMyList == -1){
+            apiClient.requestCategoryList(appointedCategory);
+        }else {
+            apiClient.getMyList(accountId,appointedMyList);
+        }
     }
 
     @Override
@@ -74,6 +83,7 @@ public class CategoryFragment extends Fragment implements ApiClient.OnResponseLi
 
     @Override
     public void onClick(View view, int position) {
+        //TODO retrieve via Tag getType of Article
         Integer id = (Integer) view.getTag();
 
         Intent intent = new Intent(getContext(),ArticleActivity.class);
