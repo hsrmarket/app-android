@@ -272,6 +272,22 @@ public class ApiClient {
         });
     }
 
+    public void getAccount(final int accountId){
+        execute(new OnInternetReady() {
+            @Override
+            public void httpRequest() {
+                httpClient
+                        .newCall(makeGetRequest("/accounts/"+accountId))
+                        .enqueue(defaultCallback(new OnJsonReady() {
+                            @Override
+                            public Object parse(Response response) {
+                                return gson.fromJson(response.body().charStream(),Account.class);
+                            }
+                        }));
+            }
+        });
+    }
+
     private void execute(OnInternetReady onInternetReady){
         if(isOnline()){
             onInternetReady.httpRequest();

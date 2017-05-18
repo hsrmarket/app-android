@@ -162,4 +162,41 @@ public class Account {
         Gson gson = GsonClient.getClient();
         return gson.fromJson(json,Account.class);
     }
+
+    public String getFullName(){
+        return this.firstName + " " + this.lastName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Account account = (Account) o;
+
+        if (id != account.id) return false;
+        if (studentId != account.studentId) return false;
+        if (admin != account.admin) return false;
+        if (!firstName.equals(account.firstName)) return false;
+        if (!lastName.equals(account.lastName)) return false;
+        if (!address.equals(account.address)) return false;
+        if (!email.equals(account.email)) return false;
+        if (!phone.equals(account.phone)) return false;
+        return password.equals(account.password);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + studentId;
+        result = 31 * result + firstName.hashCode();
+        result = 31 * result + lastName.hashCode();
+        result = 31 * result + address.hashCode();
+        result = 31 * result + email.hashCode();
+        result = 31 * result + phone.hashCode();
+        result = 31 * result + password.hashCode();
+        result = 31 * result + (admin ? 1 : 0);
+        return result;
+    }
 }

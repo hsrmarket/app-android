@@ -21,13 +21,15 @@ import java.util.Arrays;
 import java.util.List;
 
 import ch.hsrmarket.android.adapter.ViewPagerAdapter;
+import ch.hsrmarket.android.api.ApiClient;
 import ch.hsrmarket.android.model.Account;
 import ch.hsrmarket.android.model.Article;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, ApiClient.OnResponseListener {
 
     private DrawerLayout drawer;
     private NavigationView navigationView;
+    private Account currentAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
     }
 
     @Override
@@ -75,21 +78,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_credentials), Context.MODE_PRIVATE);
         String accountJson = sharedPref.getString(getString(R.string.secret_account),"");
 
-        View navHead = navigationView.getHeaderView(0);
-        TextView navName = (TextView) navHead.findViewById(R.id.nav_name);
-        TextView navEmail = (TextView) navHead.findViewById(R.id.nav_email);
-
         if(accountJson.length() == 0){
             navigationView.inflateMenu(R.menu.drawer_logged_out);
-
-            navName.setText("");
-            navEmail.setText("");
+            setHeaderTexts(getString(R.string.app_name),getString(R.string.app_url));
         }else {
             navigationView.inflateMenu(R.menu.drawer_logged_in);
 
-            Account account = Account.makeAccount(accountJson);
-            navName.setText(account.getFirstName()+ " " +account.getLastName());
-            navEmail.setText(account.getEmail());
+            currentAccount = Account.makeAccount(accountJson);
+            setHeaderTexts(currentAccount.getFullName(), currentAccount.getEmail());
+
+            ApiClient apiClient = new ApiClient(getApplicationContext(),0,this,null);
+            apiClient.getAccount(currentAccount.getId());
         }
 
         navigationView.setCheckedItem(R.id.nav_home);
@@ -136,6 +135,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         drawer.closeDrawer(GravityCompat.START);
         return false;
+
+    }
+
+    private void setHeaderTexts(String name, String email){
+        View navHead = navigationView.getHeaderView(0);
+        TextView navName = (TextView) navHead.findViewById(R.id.nav_name);
+        TextView navEmail = (TextView) navHead.findViewById(R.id.nav_email);
+
+        navName.setText(name);
+        navEmail.setText(email);
+    }
+
+    @Override
+    public void onDataLoaded(Object data, int requestCode) {
+        Account newAccount = (Account) data;
+
+        if(!currentAccount.equals(newAccount)){
+            SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_credentials),Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+
+            editor.putString(getString(R.string.secret_account), newAccount.getJsonObject());
+            editor.commit();
+
+            setHeaderTexts(newAccount.getFullName(),newAccount.getEmail());
+        }
 
     }
 }
