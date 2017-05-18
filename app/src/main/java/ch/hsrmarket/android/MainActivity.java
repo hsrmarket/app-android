@@ -131,6 +131,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             sharedPref.edit().clear().commit();
 
             onStart();
+        }else if(id == R.id.nav_articles){
+            startActivity(new Intent(getApplicationContext(),MyListActivity.class));
         }
 
         drawer.closeDrawer(GravityCompat.START);
