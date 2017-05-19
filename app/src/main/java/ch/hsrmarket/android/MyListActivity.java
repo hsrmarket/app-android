@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -15,15 +16,23 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import ch.hsrmarket.android.model.Account;
 
-public class MyListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MyListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentManager.OnBackStackChangedListener{
 
     private DrawerLayout drawer;
     private NavigationView navigationView;
-    private int appointedMyList;
+    private Bundle bundle;
+
+    private int appointedMyId;
     private int accountId = -1;
+    private Map<Integer,String> tagMap = new HashMap<>();
+    private Map<String,Integer> myIdMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +51,14 @@ public class MyListActivity extends AppCompatActivity implements NavigationView.
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.inflateMenu(R.menu.drawer_logged_in);
 
-        int receivedMyList = getIntent().getIntExtra(getString(R.string.appointed_mylist),-1);
-        navigationView.setCheckedItem(receivedMyList);
+        tagMap.put(R.id.nav_articles,getString(R.string.tag_articles));
+        tagMap.put(R.id.nav_sales,getString(R.string.tag_sales));
+        tagMap.put(R.id.nav_purchases,getString(R.string.tag_purchases));
+        getInversedMap(tagMap);
+
+
+        int receivedMyId = getIntent().getIntExtra(getString(R.string.appointed_mylist),-1);
+        navigationView.setCheckedItem(receivedMyId);
 
         SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_credentials), Context.MODE_PRIVATE);
         String accountJson = sharedPref.getString(getString(R.string.secret_account),"");
@@ -56,31 +71,44 @@ public class MyListActivity extends AppCompatActivity implements NavigationView.
             accountId = currentAccount.getId();
         }
 
-        setFragment(receivedMyList);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.addOnBackStackChangedListener(this);
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.my_list_layout,makeFragment(receivedMyId));
+        fragmentTransaction.commit();
+
+        setCurrentMyId(receivedMyId);
     }
 
     private void setFragment(int myId){
-        if(appointedMyList != myId){
+        if(appointedMyId != myId){
             FragmentManager fragmentManager = getSupportFragmentManager();
-
-            Bundle bundle = new Bundle();
-            bundle.putInt(getString(R.string.appointed_mylist),myId);
-            bundle.putInt(getString(R.string.account_pass_id),accountId);
-            bundle.putInt(getString(R.string.request_origin), ListFragment.ORIGIN_MY_LIST);
-
-            ListFragment fragment = new ListFragment();
-            fragment.setArguments(bundle);
-
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.my_list_layout,fragment);
+            fragmentTransaction.replace(R.id.my_list_layout,makeFragment(myId));
+
+            fragmentTransaction.addToBackStack(tagMap.get(appointedMyId));
             fragmentTransaction.commit();
 
-            setTitle(getTitle(myId));
-            appointedMyList = myId;
+            setCurrentMyId(myId);
         }
     }
 
-    //TODO back to old fragment
+    private Fragment makeFragment(int myId){
+        bundle = new Bundle();
+        bundle.putInt(getString(R.string.appointed_mylist),myId);
+        bundle.putInt(getString(R.string.account_pass_id),accountId);
+        bundle.putInt(getString(R.string.request_origin), ListFragment.ORIGIN_MY_LIST);
+
+        ListFragment fragment = new ListFragment();
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
+    private void setCurrentMyId(int myId){
+        setTitle(getTitle(myId));
+        appointedMyId = myId;
+    }
+
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -143,6 +171,7 @@ public class MyListActivity extends AppCompatActivity implements NavigationView.
         }
     }
 
+
     private void setHeaderTexts(String name, String email){
         View navHead = navigationView.getHeaderView(0);
         TextView navName = (TextView) navHead.findViewById(R.id.nav_name);
@@ -152,4 +181,23 @@ public class MyListActivity extends AppCompatActivity implements NavigationView.
         navEmail.setText(email);
     }
 
+    private HashMap<String,Integer> getInversedMap(Map<Integer,String> inputMap){
+        HashMap<String, Integer> returnMap = new HashMap<>();
+
+        for(Map.Entry<Integer,String> e : inputMap.entrySet()){
+            returnMap.put(e.getValue(),e.getKey());
+        }
+
+        return returnMap;
+    }
+
+    //TODO set by back the right title & appointedMyId & markedMenuEntry
+    @Override
+    public void onBackStackChanged() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if(fragmentManager.getBackStackEntryCount() > 0){
+            Toast.makeText(getApplicationContext(),"Meeoww"+appointedMyId,Toast.LENGTH_SHORT).show();
+            String fragmentTag = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1).getName();
+        }
+    }
 }

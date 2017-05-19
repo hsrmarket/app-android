@@ -23,6 +23,7 @@ public class ArticleActivity extends AppCompatActivity implements ApiClient.OnRe
 
     private Article.Type type;
     private Article currentArticle;
+    private FloatingActionButton fab;
 
     public static final int ARTICLE_REQUEST = 5;
     public static final int PURCHASE_POST = 8;
@@ -38,7 +39,7 @@ public class ArticleActivity extends AppCompatActivity implements ApiClient.OnRe
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_buy);
+        fab = (FloatingActionButton) findViewById(R.id.fab_buy);
         fab.setOnClickListener(this);
 
         Bundle bundle = getIntent().getExtras();
@@ -65,6 +66,7 @@ public class ArticleActivity extends AppCompatActivity implements ApiClient.OnRe
                 loadExistingArticle(data);
                 break;
             case PURCHASE_POST:
+                fab.setEnabled(true);
                 Toast.makeText(getApplicationContext(),getString(R.string.msg_successful_purchased),Toast.LENGTH_SHORT).show();
                 finish();
                 break;
@@ -76,6 +78,7 @@ public class ArticleActivity extends AppCompatActivity implements ApiClient.OnRe
         switch (requestCode){
             case ARTICLE_REQUEST:
             case PURCHASE_POST:
+                fab.setEnabled(true);
                 Toast.makeText(getApplicationContext(),msg, Toast.LENGTH_SHORT).show();
                 finish();
                 break;
@@ -196,9 +199,10 @@ public class ArticleActivity extends AppCompatActivity implements ApiClient.OnRe
 
                 if(accountJson.length() != 0){
                     Account account = Account.makeAccount(accountJson);
-                    ApiClient apiClient = new ApiClient(getApplicationContext(),PURCHASE_POST,this,this);
-                    apiClient.createPurchase(currentArticle, account);
+                    fab.setEnabled(false);
 
+                    ApiClient apiClient = new ApiClient(getApplicationContext(), PURCHASE_POST, this, this);
+                    apiClient.createPurchase(currentArticle, account);
                 }else{
                     Toast.makeText(getApplicationContext(),getString(R.string.msg_login_first),Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(getApplicationContext(),LoginActivity.class));

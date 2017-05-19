@@ -11,13 +11,13 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
-import ch.hsrmarket.android.adapter.CategoryAdapter;
+import ch.hsrmarket.android.adapter.ListAdapter;
 import ch.hsrmarket.android.adapter.EmptyAdapter;
 import ch.hsrmarket.android.api.ApiClient;
 import ch.hsrmarket.android.model.Article;
 
 
-public class ListFragment extends Fragment implements ApiClient.OnResponseListener, ApiClient.OnFailureListener, CategoryAdapter.OnItemClickListener{
+public class ListFragment extends Fragment implements ApiClient.OnResponseListener, ApiClient.OnFailureListener, ListAdapter.OnItemClickListener{
 
     private RecyclerView recyclerView;
     private Article.Type appointedCategory;
@@ -71,7 +71,7 @@ public class ListFragment extends Fragment implements ApiClient.OnResponseListen
             EmptyAdapter adapter = new EmptyAdapter(getString(R.string.msg_listview_empty),R.drawable.ic_empty);
             recyclerView.setAdapter(adapter);
         }else {
-            CategoryAdapter adapter = new CategoryAdapter(items);
+            ListAdapter adapter = new ListAdapter(items);
             adapter.setOnItemClickListener(this);
             recyclerView.setAdapter(adapter);
         }

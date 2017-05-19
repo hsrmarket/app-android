@@ -12,6 +12,10 @@
     <string name="pref_credentials">accountData</string>
     <string name="secret_account">accountJson</string>
 
+    <string name="tag_articles">articles</string>
+    <string name="tag_sales">sales</string>
+    <string name="tag_purchases">purchases</string>
+
     <!-- For normal purpose -->
     <string name="app_name">HSRmarket</string>
     <string name="app_url">web.hsrmarket.ch:3000</string>
