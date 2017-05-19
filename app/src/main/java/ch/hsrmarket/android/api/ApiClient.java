@@ -272,11 +272,60 @@ public class ApiClient {
         });
     }
 
+    public void getAccount(final int accountId){
+        execute(new OnInternetReady() {
+            @Override
+            public void httpRequest() {
+                httpClient
+                        .newCall(makeGetRequest("/accounts/"+accountId))
+                        .enqueue(defaultCallback(new OnJsonReady() {
+                            @Override
+                            public Object parse(Response response) {
+                                return gson.fromJson(response.body().charStream(),Account.class);
+                            }
+                        }));
+            }
+        });
+    }
+
+    public void getMyList(final int accountId, final int myId){
+        execute(new OnInternetReady() {
+            @Override
+            public void httpRequest() {
+                httpClient
+                        .newCall(makeGetRequest("/user/"+accountId+getMyPath(myId)))
+                        .enqueue(defaultCallback(new OnJsonReady() {
+                            @Override
+                            public Object parse(Response response) {
+                                Type listType = new TypeToken<List<Article>>(){}.getType();
+                                return gson.fromJson(response.body().charStream(),listType);
+                            }
+                        }));
+            }
+        });
+    }
+
     private void execute(OnInternetReady onInternetReady){
         if(isOnline()){
             onInternetReady.httpRequest();
         }else {
             misfireScenario(context.getString(R.string.msg_no_internet));
+        }
+    }
+
+    private String getMyPath(int myId){
+        switch (myId){
+            case R.id.nav_articles:
+                return "/articles";
+
+            case R.id.nav_sales:
+                return "/sales";
+
+            case R.id.nav_purchases:
+                return "/purchases";
+
+            default:
+                throw new AssertionError("Forgot to implement");
         }
     }
 

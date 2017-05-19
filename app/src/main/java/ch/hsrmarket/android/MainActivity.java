@@ -21,13 +21,15 @@ import java.util.Arrays;
 import java.util.List;
 
 import ch.hsrmarket.android.adapter.ViewPagerAdapter;
+import ch.hsrmarket.android.api.ApiClient;
 import ch.hsrmarket.android.model.Account;
 import ch.hsrmarket.android.model.Article;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, ApiClient.OnResponseListener {
 
     private DrawerLayout drawer;
     private NavigationView navigationView;
+    private Account currentAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +48,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         for(Article.Type t : types){
             Bundle bundle = new Bundle();
             bundle.putSerializable(getString(R.string.appointed_category),t);
+            bundle.putInt(getString(R.string.request_origin), ListFragment.ORIGIN_CATEGORY);
 
-            CategoryFragment fragment = new CategoryFragment();
+            ListFragment fragment = new ListFragment();
             fragment.setArguments(bundle);
 
             adapter.addFragment(fragment,getTabName(t));
@@ -65,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
     }
 
     @Override
@@ -75,21 +79,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_credentials), Context.MODE_PRIVATE);
         String accountJson = sharedPref.getString(getString(R.string.secret_account),"");
 
-        View navHead = navigationView.getHeaderView(0);
-        TextView navName = (TextView) navHead.findViewById(R.id.nav_name);
-        TextView navEmail = (TextView) navHead.findViewById(R.id.nav_email);
-
         if(accountJson.length() == 0){
             navigationView.inflateMenu(R.menu.drawer_logged_out);
-
-            navName.setText("");
-            navEmail.setText("");
+            setHeaderTexts(getString(R.string.app_name),getString(R.string.app_url));
         }else {
             navigationView.inflateMenu(R.menu.drawer_logged_in);
 
-            Account account = Account.makeAccount(accountJson);
-            navName.setText(account.getFirstName()+ " " +account.getLastName());
-            navEmail.setText(account.getEmail());
+            currentAccount = Account.makeAccount(accountJson);
+            setHeaderTexts(currentAccount.getFullName(), currentAccount.getEmail());
+
+            ApiClient apiClient = new ApiClient(getApplicationContext(),0,this,null);
+            apiClient.getAccount(currentAccount.getId());
         }
 
         navigationView.setCheckedItem(R.id.nav_home);
@@ -123,19 +123,63 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
+        Intent myIntent = new Intent(getApplicationContext(),MyListActivity.class);
 
-        if (id == R.id.nav_login) {
-            startActivity(new Intent(getApplicationContext(),LoginActivity.class));
+        switch (id){
+            case R.id.nav_login:
+                startActivity(new Intent(getApplicationContext(),LoginActivity.class));
+                break;
 
-        }else if(id == R.id.nav_logout){
-            SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_credentials),Context.MODE_PRIVATE);
-            sharedPref.edit().clear().commit();
+            case R.id.nav_logout:
+                SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_credentials),Context.MODE_PRIVATE);
+                sharedPref.edit().clear().commit();
 
-            onStart();
+                onStart();
+                break;
+
+            case R.id.nav_articles:
+                myIntent.putExtra(getString(R.string.appointed_mylist),R.id.nav_articles);
+                startActivity(myIntent);
+                break;
+
+            case R.id.nav_sales:
+                myIntent.putExtra(getString(R.string.appointed_mylist),R.id.nav_sales);
+                startActivity(myIntent);
+                break;
+
+            case R.id.nav_purchases:
+                myIntent.putExtra(getString(R.string.appointed_mylist),R.id.nav_purchases);
+                startActivity(myIntent);
+                break;
         }
 
         drawer.closeDrawer(GravityCompat.START);
         return false;
+
+    }
+
+    private void setHeaderTexts(String name, String email){
+        View navHead = navigationView.getHeaderView(0);
+        TextView navName = (TextView) navHead.findViewById(R.id.nav_name);
+        TextView navEmail = (TextView) navHead.findViewById(R.id.nav_email);
+
+        navName.setText(name);
+        navEmail.setText(email);
+    }
+
+    @Override
+    public void onDataLoaded(Object data, int requestCode) {
+        Account newAccount = (Account) data;
+
+        if(!currentAccount.equals(newAccount)){
+            SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_credentials),Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+
+            editor.putString(getString(R.string.secret_account), newAccount.getJsonObject());
+            editor.commit();
+
+            setHeaderTexts(newAccount.getFullName(),newAccount.getEmail());
+        }
 
     }
 }

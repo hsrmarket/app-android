@@ -11,7 +11,7 @@ import java.util.List;
 import ch.hsrmarket.android.R;
 import ch.hsrmarket.android.model.Article;
 
-public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
+public class ListAdapter extends RecyclerView.Adapter<ListAdapter.CategoryViewHolder> {
 
     public interface OnItemClickListener{
         public void onClick(View view, int position);
@@ -20,7 +20,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     private List<Article> data;
     private OnItemClickListener clickListener;
 
-    public CategoryAdapter(List<Article> data){
+    public ListAdapter(List<Article> data){
         this.data = data;
     }
 
@@ -35,7 +35,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     public void onBindViewHolder(CategoryViewHolder holder, int position) {
         Article article = data.get(position);
 
-        holder.root.setTag(article.getId());
+        holder.root.setTag(R.integer.article_id,article.getId());
+        holder.root.setTag(R.integer.article_type,article.getType());
 
         holder.name.setText(article.getName());
         holder.price.setText( article.getPrice());
