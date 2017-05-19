@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- For set the Tag on view (ListView) -->
+    <integer name="article_id">11</integer>
+    <integer name="article_type">13</integer>
+</resources>

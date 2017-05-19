@@ -3,14 +3,14 @@
     <string name="appointed_category">appointedCategory</string>
     <string name="appointed_mylist">appointedMylist</string>
     <string name="account_pass_id">accountId</string>
+    <string name="request_origin">realOrigin</string>
+
     <string name="article_pass_id">requestedId</string>
     <string name="article_pass_type">requestedType</string>
+    <string name="article_display_mode">displayMode</string>
 
     <string name="pref_credentials">accountData</string>
     <string name="secret_account">accountJson</string>
-    
-    <integer name="article_id">13</integer>
-    <integer name="article_type">21</integer>
 
     <!-- For normal purpose -->
     <string name="app_name">HSRmarket</string>

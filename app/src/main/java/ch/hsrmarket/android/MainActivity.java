@@ -48,8 +48,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         for(Article.Type t : types){
             Bundle bundle = new Bundle();
             bundle.putSerializable(getString(R.string.appointed_category),t);
+            bundle.putInt(getString(R.string.request_origin), ListFragment.ORIGIN_CATEGORY);
 
-            CategoryFragment fragment = new CategoryFragment();
+            ListFragment fragment = new ListFragment();
             fragment.setArguments(bundle);
 
             adapter.addFragment(fragment,getTabName(t));

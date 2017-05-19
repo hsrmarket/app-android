@@ -17,24 +17,28 @@ import ch.hsrmarket.android.api.ApiClient;
 import ch.hsrmarket.android.model.Article;
 
 
-public class CategoryFragment extends Fragment implements ApiClient.OnResponseListener, ApiClient.OnFailureListener, CategoryAdapter.OnItemClickListener{
+public class ListFragment extends Fragment implements ApiClient.OnResponseListener, ApiClient.OnFailureListener, CategoryAdapter.OnItemClickListener{
 
     private RecyclerView recyclerView;
     private Article.Type appointedCategory;
     private int appointedMyList;
     private int accountId;
+    private int requestOrigin;
 
-    public static final int CATEGORY_ITEMS_REQUEST = 3;
+    public static final int ORIGIN_MY_LIST = 3;
+    public static final int ORIGIN_CATEGORY = 5;
+
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_category, container, false);
+        View root = inflater.inflate(R.layout.fragment_list, container, false);
 
         Bundle bundle = getArguments();
         appointedCategory = (Article.Type) bundle.getSerializable(getString(R.string.appointed_category));
         appointedMyList = bundle.getInt(getString(R.string.appointed_mylist),-1);
         accountId = bundle.getInt(getString(R.string.account_pass_id),-1);
+        requestOrigin = bundle.getInt(getString(R.string.request_origin),-1);
 
-        recyclerView = (RecyclerView) root.findViewById(R.id.listCategory);
+        recyclerView = (RecyclerView) root.findViewById(R.id.recycler_view);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
 
@@ -45,41 +49,39 @@ public class CategoryFragment extends Fragment implements ApiClient.OnResponseLi
     public void onStart() {
         super.onStart();
 
-        ApiClient apiClient = new ApiClient(getContext(), CATEGORY_ITEMS_REQUEST, this, this);
+        ApiClient apiClient = new ApiClient(getContext(), 0, this, this);
         EmptyAdapter adapter = new EmptyAdapter();
         recyclerView.setAdapter(adapter);
 
-        if(appointedMyList == -1){
-            apiClient.requestCategoryList(appointedCategory);
-        }else {
-            apiClient.getMyList(accountId,appointedMyList);
+        switch (requestOrigin){
+            case ORIGIN_CATEGORY:
+                apiClient.requestCategoryList(appointedCategory);
+                break;
+            case ORIGIN_MY_LIST:
+                apiClient.getMyList(accountId,appointedMyList);
+                break;
         }
     }
 
     @Override
     public void onDataLoaded(Object data, int requestCode) {
-        if(requestCode == CATEGORY_ITEMS_REQUEST){
+        List<Article> items = (List<Article>) data;
 
-            List<Article> items = (List<Article>) data;
-
-            if(items.isEmpty()){
-                EmptyAdapter adapter = new EmptyAdapter(getString(R.string.msg_listview_empty),R.drawable.ic_empty);
-                recyclerView.setAdapter(adapter);
-            }else {
-                CategoryAdapter adapter = new CategoryAdapter(items);
-                adapter.setOnItemClickListener(this);
-                recyclerView.setAdapter(adapter);
-            }
+        if(items.isEmpty()){
+            EmptyAdapter adapter = new EmptyAdapter(getString(R.string.msg_listview_empty),R.drawable.ic_empty);
+            recyclerView.setAdapter(adapter);
+        }else {
+            CategoryAdapter adapter = new CategoryAdapter(items);
+            adapter.setOnItemClickListener(this);
+            recyclerView.setAdapter(adapter);
         }
     }
 
     @Override
     public void onFailure(String msg, int requestCode) {
-        if(requestCode == CATEGORY_ITEMS_REQUEST){
             EmptyAdapter adapter = new EmptyAdapter(msg,R.drawable.ic_warning);
             recyclerView.setAdapter(adapter);
-        }
-    }
+   }
 
     @Override
     public void onClick(View view, int position) {
@@ -89,6 +91,15 @@ public class CategoryFragment extends Fragment implements ApiClient.OnResponseLi
         Intent intent = new Intent(getContext(),ArticleActivity.class);
         intent.putExtra(getString(R.string.article_pass_id),id);
         intent.putExtra(getString(R.string.article_pass_type),type);
+
+        switch (requestOrigin){
+            case ORIGIN_CATEGORY:
+                intent.putExtra(getString(R.string.article_display_mode),ArticleActivity.DISPLAY_WITH_BUY);
+                break;
+            case ORIGIN_MY_LIST:
+                intent.putExtra(getString(R.string.article_display_mode),ArticleActivity.DISPLAY_ONLY);
+                break;
+        }
 
         startActivity(intent);
     }

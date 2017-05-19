@@ -17,7 +17,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import ch.hsrmarket.android.model.Account;
-import ch.hsrmarket.android.model.Article;
 
 public class MyListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -67,7 +66,9 @@ public class MyListActivity extends AppCompatActivity implements NavigationView.
             Bundle bundle = new Bundle();
             bundle.putInt(getString(R.string.appointed_mylist),myId);
             bundle.putInt(getString(R.string.account_pass_id),accountId);
-            CategoryFragment fragment = new CategoryFragment();
+            bundle.putInt(getString(R.string.request_origin), ListFragment.ORIGIN_MY_LIST);
+
+            ListFragment fragment = new ListFragment();
             fragment.setArguments(bundle);
 
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -79,6 +80,7 @@ public class MyListActivity extends AppCompatActivity implements NavigationView.
         }
     }
 
+    //TODO back to old fragment
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {

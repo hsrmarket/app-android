@@ -9,6 +9,7 @@ import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -26,6 +27,9 @@ public class ArticleActivity extends AppCompatActivity implements ApiClient.OnRe
     public static final int ARTICLE_REQUEST = 5;
     public static final int PURCHASE_POST = 8;
 
+    public static final int DISPLAY_WITH_BUY = 13;
+    public static final int DISPLAY_ONLY = 21;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article);
@@ -40,9 +44,18 @@ public class ArticleActivity extends AppCompatActivity implements ApiClient.OnRe
         Bundle bundle = getIntent().getExtras();
         int requestId = bundle.getInt(getString(R.string.article_pass_id),-1);
         type = (Article.Type) bundle.getSerializable(getString(R.string.article_pass_type));
+        int chosenDisplay = bundle.getInt(getString(R.string.article_display_mode),-1);
 
-        ApiClient apiClient = new ApiClient(getApplicationContext(),ARTICLE_REQUEST,this,this);
-        apiClient.requestSingleArticle(requestId);
+        switch (chosenDisplay){
+            case DISPLAY_ONLY:
+                fab.setVisibility(View.GONE);
+
+            case DISPLAY_WITH_BUY:
+                ApiClient apiClient = new ApiClient(getApplicationContext(),ARTICLE_REQUEST,this,this);
+                apiClient.requestSingleArticle(requestId);
+                break;
+
+        }
     }
 
     @Override
@@ -194,6 +207,17 @@ public class ArticleActivity extends AppCompatActivity implements ApiClient.OnRe
                 break;
         }
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+
+        return(super.onOptionsItemSelected(item));
     }
 
 }
