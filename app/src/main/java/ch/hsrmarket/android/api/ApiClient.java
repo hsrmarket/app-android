@@ -34,7 +34,61 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ApiClient {
+public class ApiClient implements ApiClient.OnJsonReady {
+
+    private static final int PARSE_ARTICLE_LIST = 2;
+    private static final int PARSE_ARTICLE = 3;
+    private static final int PARSE_ACCOUNT = 5;
+
+    @Override
+    public Object parse(Response response, int requestCode) {
+        switch (requestCode){
+            case PARSE_ARTICLE_LIST:
+                Type listType = new TypeToken<List<Article>>(){}.getType();
+                return gson.fromJson(response.body().charStream(),listType);
+
+            case PARSE_ARTICLE:
+                String json = "";
+
+                try {
+                    json = response.body().string();
+                } catch (IOException e) {
+                    Log.e(TAG,e.toString());
+                }
+
+                Article article = gson.fromJson(json,Article.class);
+                Class targetClass;
+
+                switch (article.getType()){
+                    case BOOK:
+                        targetClass = Book.class;
+                        break;
+
+                    case ELECTRONIC_DEVICE:
+                        targetClass = Electronic.class;
+                        break;
+
+                    case OFFICE_SUPPLY:
+                        targetClass = OfficeSupply.class;
+                        break;
+
+                    case OTHER:
+                        targetClass = Other.class;
+                        break;
+
+                    default:
+                        throw new AssertionError("Forgot to implement");
+                }
+
+                return gson.fromJson(json,targetClass);
+
+            case PARSE_ACCOUNT:
+                return gson.fromJson(response.body().charStream(),Account.class);
+
+            default:
+                throw new AssertionError("Forgot to implement");
+        }
+    }
 
     public interface OnResponseListener{
         public void onDataLoaded(Object data, int requestCode);
@@ -44,7 +98,7 @@ public class ApiClient {
     }
 
     private interface OnJsonReady {
-         Object parse(Response response);
+         Object parse(Response response, int requestCode);
     }
 
     private interface OnInternetReady{
@@ -81,7 +135,7 @@ public class ApiClient {
         return new Request.Builder().url(BASE_URL+Path).post(body).build();
     }
 
-    private Callback defaultCallback(final OnJsonReady onJsonReady){
+    private Callback defaultCallback(final OnJsonReady onJsonReady, final int requestCode){
         return new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -100,7 +154,7 @@ public class ApiClient {
                     Object parsedOne = null;
 
                     if(onJsonReady != null) {
-                        parsedOne = onJsonReady.parse(response);
+                        parsedOne = onJsonReady.parse(response, requestCode);
                     }
                     fireScenario(parsedOne);
                 }
@@ -189,14 +243,7 @@ public class ApiClient {
             public void httpRequest() {
                 httpClient
                         .newCall(makeGetRequest(finalPath))
-                        .enqueue(defaultCallback(new OnJsonReady() {
-                            @Override
-                            public Object parse(Response response) {
-
-                                Type listType = new TypeToken<List<Article>>(){}.getType();
-                                return gson.fromJson(response.body().charStream(),listType);
-                            }
-                        }));
+                        .enqueue(defaultCallback(ApiClient.this,PARSE_ARTICLE_LIST));
             }
         });
     }
@@ -208,44 +255,7 @@ public class ApiClient {
             public void httpRequest() {
                 httpClient
                         .newCall(makeGetRequest("/articles/"+id))
-                        .enqueue(defaultCallback(new OnJsonReady() {
-                            @Override
-                            public Object parse(Response response) {
-                                String json = "";
-
-                                try {
-                                    json = response.body().string();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-
-                                Article article = gson.fromJson(json,Article.class);
-                                Class targetClass;
-
-                                switch (article.getType()){
-                                    case BOOK:
-                                        targetClass = Book.class;
-                                        break;
-
-                                    case ELECTRONIC_DEVICE:
-                                        targetClass = Electronic.class;
-                                        break;
-
-                                    case OFFICE_SUPPLY:
-                                        targetClass = OfficeSupply.class;
-                                        break;
-
-                                    case OTHER:
-                                        targetClass = Other.class;
-                                        break;
-
-                                    default:
-                                        throw new AssertionError("Forgot to implement");
-                                }
-
-                                return gson.fromJson(json,targetClass);
-                            }
-                        }));
+                        .enqueue(defaultCallback(ApiClient.this,PARSE_ARTICLE));
             }
         });
     }
@@ -274,12 +284,7 @@ public class ApiClient {
             public void httpRequest() {
                 httpClient
                         .newCall(makePostRequest("/accounts", account))
-                        .enqueue(defaultCallback(new OnJsonReady() {
-                            @Override
-                            public Object parse(Response response) {
-                                return gson.fromJson(response.body().charStream(),Account.class);
-                            }
-                        }));
+                        .enqueue(defaultCallback(ApiClient.this,PARSE_ACCOUNT));
             }
         });
     }
@@ -293,12 +298,7 @@ public class ApiClient {
             public void httpRequest() {
                 httpClient.
                         newCall(makePostRequest("/user/login", account)).
-                        enqueue(defaultCallback(new OnJsonReady() {
-                            @Override
-                            public Object parse(Response response) {
-                                return gson.fromJson(response.body().charStream(),Account.class);
-                            }
-                        }));
+                        enqueue(defaultCallback(ApiClient.this,PARSE_ACCOUNT));
             }
         });
     }
@@ -309,12 +309,7 @@ public class ApiClient {
             public void httpRequest() {
                 httpClient
                         .newCall(makeGetRequest("/accounts/"+accountId))
-                        .enqueue(defaultCallback(new OnJsonReady() {
-                            @Override
-                            public Object parse(Response response) {
-                                return gson.fromJson(response.body().charStream(),Account.class);
-                            }
-                        }));
+                        .enqueue(defaultCallback(ApiClient.this,PARSE_ACCOUNT));
             }
         });
     }
@@ -325,13 +320,7 @@ public class ApiClient {
             public void httpRequest() {
                 httpClient
                         .newCall(makeGetRequest("/user/"+accountId+"/articles"))
-                        .enqueue(defaultCallback(new OnJsonReady() {
-                            @Override
-                            public Object parse(Response response) {
-                                Type listType = new TypeToken<List<Article>>(){}.getType();
-                                return gson.fromJson(response.body().charStream(),listType);
-                            }
-                        }));
+                        .enqueue(defaultCallback(ApiClient.this,PARSE_ARTICLE_LIST));
             }
         });
     }
