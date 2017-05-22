@@ -39,74 +39,10 @@ interface OnJsonReady {
 }
 
 interface OnInternetReady{
-    void httpRequest();
+    void httpRequest(int requestCode, Object... args);
 }
 
-public class ApiClient implements OnJsonReady {
-
-    private static final int PARSE_ARTICLE_LIST = 2;
-    private static final int PARSE_ARTICLE = 3;
-    private static final int PARSE_ACCOUNT = 5;
-    private static final int PARSE_PURCHASE = 7;
-    private static final int PARSE_PURCHASE_TO_ARTICLE = 11;
-
-    @Override
-    public Object parse(Response response, int requestCode) {
-        switch (requestCode){
-            case PARSE_ARTICLE_LIST:
-                Type listType = new TypeToken<List<Article>>(){}.getType();
-                return gson.fromJson(response.body().charStream(),listType);
-
-            case PARSE_ARTICLE:
-                String json = "";
-
-                try {
-                    json = response.body().string();
-                } catch (IOException e) {
-                    Log.e(TAG,e.toString());
-                }
-
-                Article article = gson.fromJson(json,Article.class);
-                Class targetClass;
-
-                switch (article.getType()){
-                    case BOOK:
-                        targetClass = Book.class;
-                        break;
-
-                    case ELECTRONIC_DEVICE:
-                        targetClass = Electronic.class;
-                        break;
-
-                    case OFFICE_SUPPLY:
-                        targetClass = OfficeSupply.class;
-                        break;
-
-                    case OTHER:
-                        targetClass = Other.class;
-                        break;
-
-                    default:
-                        throw new AssertionError("Forgot to implement");
-                }
-
-                return gson.fromJson(json,targetClass);
-
-            case PARSE_ACCOUNT:
-                return gson.fromJson(response.body().charStream(),Account.class);
-
-            case PARSE_PURCHASE:
-                return gson.fromJson(response.body().charStream(),Purchase.class);
-
-            case PARSE_PURCHASE_TO_ARTICLE:
-                Type typeList = new TypeToken<List<Purchase>>(){}.getType();
-                List<Purchase> purchases = gson.fromJson(response.body().charStream(),typeList);
-                return extractArticles(purchases);
-
-            default:
-                throw new AssertionError("Forgot to implement");
-        }
-    }
+public class ApiClient implements OnJsonReady, OnInternetReady {
 
     public interface OnResponseListener{
         public void onDataLoaded(Object data, int requestCode);
@@ -114,8 +50,6 @@ public class ApiClient implements OnJsonReady {
     public interface OnFailureListener{
         public void onFailure(String msg, int requestCode);
     }
-
-
 
     public static final MediaType JSON_CONTENT_TYPE = MediaType.parse("application/json; charset=utf-8");
     private static final String TAG = ApiClient.class.getSimpleName();
@@ -198,9 +132,9 @@ public class ApiClient implements OnJsonReady {
         }
     }
 
-    private void execute(OnInternetReady onInternetReady){
+    private void execute(OnInternetReady onInternetReady, int requestCode, Object... args){
         if(isOnline()){
-            onInternetReady.httpRequest();
+            onInternetReady.httpRequest(requestCode, args);
         }else {
             misfireScenario(context.getString(R.string.msg_no_internet));
         }
@@ -220,6 +154,18 @@ public class ApiClient implements OnJsonReady {
             default:
                 throw new AssertionError("Forgot to implement");
         }
+    }
+
+    private List<Article> extractArticles(List<Purchase> purchases){
+        List<Article> articles = new ArrayList<>();
+
+        for(Purchase p : purchases){
+            Article a = p.getArticle();
+            a.setPurchaseId(p.getId());
+            articles.add(a);
+        }
+
+        return articles;
     }
 
     private boolean isOnline() {
@@ -249,115 +195,169 @@ public class ApiClient implements OnJsonReady {
                 throw new AssertionError("Forgot to implement");
         }
 
-        final String finalPath = path;
-        execute(new OnInternetReady() {
-            @Override
-            public void httpRequest() {
-                httpClient
-                        .newCall(makeGetRequest(finalPath))
-                        .enqueue(defaultCallback(ApiClient.this,PARSE_ARTICLE_LIST));
-            }
-        });
+        execute(ApiClient.this, GET_ARTICLE_LIST,path);
     }
 
-    public void getArticle(final int id){
-
-        execute(new OnInternetReady() {
-            @Override
-            public void httpRequest() {
-                httpClient
-                        .newCall(makeGetRequest("/articles/"+id))
-                        .enqueue(defaultCallback(ApiClient.this,PARSE_ARTICLE));
-            }
-        });
+    public void getArticle(int id){
+        execute(ApiClient.this, GET_ARTICLE, "/articles/"+id);
     }
 
-    public void createPurchase(Article article, Account account){
-
+    public void postPurchase(Article article, Account account){
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String formattedDate = dateFormat.format(calendar.getTime());
-        final Purchase purchase = new Purchase(0,article, account,null,formattedDate,false);
+        Purchase purchase = new Purchase(0,article, account, null,formattedDate,false);
 
-        execute(new OnInternetReady() {
-            @Override
-            public void httpRequest() {
-                httpClient
-                        .newCall(makePostRequest("/purchases",purchase))
-                        .enqueue(defaultCallback(ApiClient.this,PARSE_PURCHASE));
-            }
-        });
-
+        execute(ApiClient.this,POST_PURCHASE,"/purchases",purchase);
     }
 
-    public void createPerson(final Account account){
-        execute(new OnInternetReady() {
-            @Override
-            public void httpRequest() {
-                httpClient
-                        .newCall(makePostRequest("/accounts", account))
-                        .enqueue(defaultCallback(ApiClient.this,PARSE_ACCOUNT));
-            }
-        });
+    public void postAccount(Account account){
+        execute(ApiClient.this,POST_ACCOUNT,"/accounts",account);
     }
 
-    public void checkCredentials(String email, String password){
-
-        final Account account = new Account(email,password);
-
-        execute(new OnInternetReady() {
-            @Override
-            public void httpRequest() {
-                httpClient.
-                        newCall(makePostRequest("/user/login", account)).
-                        enqueue(defaultCallback(ApiClient.this,PARSE_ACCOUNT));
-            }
-        });
+    public void postLogin(String email, String password){
+        Account account = new Account(email,password);
+        execute(ApiClient.this,POST_ACCOUNT,"/user/login",account);
     }
 
-    public void getAccount(final int accountId){
-        execute(new OnInternetReady() {
-            @Override
-            public void httpRequest() {
-                httpClient
-                        .newCall(makeGetRequest("/accounts/"+accountId))
-                        .enqueue(defaultCallback(ApiClient.this,PARSE_ACCOUNT));
-            }
-        });
+    public void getAccount(int id){
+        execute(ApiClient.this, GET_ACCOUNT, "/accounts/"+id);
     }
 
-    public void getArticleList(final int accountId){
-        execute(new OnInternetReady() {
-            @Override
-            public void httpRequest() {
-                httpClient
-                        .newCall(makeGetRequest("/user/"+accountId+"/articles"))
-                        .enqueue(defaultCallback(ApiClient.this,PARSE_ARTICLE_LIST));
-            }
-        });
+    public void getArticleList(int accountId){
+        execute(ApiClient.this, GET_MY_ARTICLES, "/user/"+accountId+"/articles");
     }
 
-    public void getArticleList(final int accountId, final int myId){
-        execute(new OnInternetReady() {
-            @Override
-            public void httpRequest() {
-                httpClient
-                        .newCall(makeGetRequest("/user/"+accountId+getMyPath(myId)))
-                        .enqueue(defaultCallback(ApiClient.this,PARSE_PURCHASE_TO_ARTICLE));
-            }
-        });
+    public void getArticleList(int accountId, int myId){
+        execute(ApiClient.this, GET_MY_LIST, "/user/"+accountId+getMyPath(myId));
     }
 
-    private List<Article> extractArticles(List<Purchase> purchases){
-        List<Article> articles = new ArrayList<>();
+    private static final int PARSE_ARTICLE_LIST = 2;
+    private static final int PARSE_ARTICLE = 3;
+    private static final int PARSE_ACCOUNT = 5;
+    private static final int PARSE_PURCHASE = 7;
+    private static final int PARSE_PURCHASE_TO_ARTICLE = 11;
 
-        for(Purchase p : purchases){
-            Article a = p.getArticle();
-            a.setPurchaseId(p.getId());
-            articles.add(a);
+    private static final int GET_ARTICLE_LIST = 13;
+    private static final int GET_ARTICLE = 17;
+    private static final int POST_PURCHASE = 19;
+    private static final int POST_ACCOUNT = 23;
+    private static final int GET_ACCOUNT = 29;
+    private static final int GET_MY_ARTICLES = 31;
+    private static final int GET_MY_LIST = 37;
+
+    @Override
+    public Object parse(Response response, int requestCode) {
+        switch (requestCode){
+            case PARSE_ARTICLE_LIST:
+                Type listType = new TypeToken<List<Article>>(){}.getType();
+                return gson.fromJson(response.body().charStream(),listType);
+
+            case PARSE_ARTICLE:
+                String json = "";
+
+                try {
+                    json = response.body().string();
+                } catch (IOException e) {
+                    Log.e(TAG,e.toString());
+                }
+
+                Article article = gson.fromJson(json,Article.class);
+                Class targetClass;
+
+                switch (article.getType()){
+                    case BOOK:
+                        targetClass = Book.class;
+                        break;
+
+                    case ELECTRONIC_DEVICE:
+                        targetClass = Electronic.class;
+                        break;
+
+                    case OFFICE_SUPPLY:
+                        targetClass = OfficeSupply.class;
+                        break;
+
+                    case OTHER:
+                        targetClass = Other.class;
+                        break;
+
+                    default:
+                        throw new AssertionError("Forgot to implement");
+                }
+
+                return gson.fromJson(json,targetClass);
+
+            case PARSE_ACCOUNT:
+                return gson.fromJson(response.body().charStream(),Account.class);
+
+            case PARSE_PURCHASE:
+                return gson.fromJson(response.body().charStream(),Purchase.class);
+
+            case PARSE_PURCHASE_TO_ARTICLE:
+                Type typeList = new TypeToken<List<Purchase>>(){}.getType();
+                List<Purchase> purchases = gson.fromJson(response.body().charStream(),typeList);
+                return extractArticles(purchases);
+
+            default:
+                throw new AssertionError("Forgot to implement");
+        }
+    }
+
+    @Override
+    public void httpRequest(int requestCode, Object... args) {
+        String path = (String) args[0];
+        Object postBody = null;
+
+        if(args.length > 1){
+            postBody = args[1];
         }
 
-        return articles;
-    }
+        switch(requestCode){
+            case GET_ARTICLE_LIST:
+                httpClient
+                        .newCall(makeGetRequest(path))
+                        .enqueue(defaultCallback(ApiClient.this,PARSE_ARTICLE_LIST));
+                break;
 
+            case GET_ARTICLE:
+                httpClient
+                        .newCall(makeGetRequest(path))
+                        .enqueue(defaultCallback(ApiClient.this,PARSE_ARTICLE));
+                break;
+
+            case POST_PURCHASE:
+                httpClient
+                        .newCall(makePostRequest(path,postBody))
+                        .enqueue(defaultCallback(ApiClient.this,PARSE_PURCHASE));
+                break;
+
+            case POST_ACCOUNT:
+                httpClient
+                        .newCall(makePostRequest(path, postBody))
+                        .enqueue(defaultCallback(ApiClient.this,PARSE_ACCOUNT));
+                break;
+
+            case GET_ACCOUNT:
+                httpClient
+                        .newCall(makeGetRequest(path))
+                        .enqueue(defaultCallback(ApiClient.this,PARSE_ACCOUNT));
+                break;
+
+            case GET_MY_ARTICLES:
+                httpClient
+                        .newCall(makeGetRequest(path))
+                        .enqueue(defaultCallback(ApiClient.this,PARSE_ARTICLE_LIST));
+                break;
+
+            case GET_MY_LIST:
+                httpClient
+                        .newCall(makeGetRequest(path))
+                        .enqueue(defaultCallback(ApiClient.this,PARSE_PURCHASE_TO_ARTICLE));
+                break;
+
+            default:
+                throw new AssertionError("Forgot to implement");
+        }
+    }
 }

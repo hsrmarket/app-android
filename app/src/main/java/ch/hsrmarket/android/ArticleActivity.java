@@ -203,7 +203,7 @@ public class ArticleActivity extends AppCompatActivity implements ApiClient.OnRe
                     fab.setEnabled(false);
 
                     ApiClient apiClient = new ApiClient(getApplicationContext(), PURCHASE_POST, this, this);
-                    apiClient.createPurchase(currentArticle, account);
+                    apiClient.postPurchase(currentArticle, account);
                 }else{
                     Toast.makeText(getApplicationContext(),getString(R.string.msg_login_first),Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(getApplicationContext(),LoginActivity.class));

@@ -60,7 +60,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     String hash = LoginActivity.getHash(getString(etPassword));
                     Account account = new Account(getInt(etStudentId),getString(etFirstName),getString(etLastName),getAddress(etStreet,etStreetNo,etZip,etCity), getString(etPhone), getString(etEmail), hash);
 
-                    apiClient.createPerson(account);
+                    apiClient.postAccount(account);
                 }
 
                 break;
