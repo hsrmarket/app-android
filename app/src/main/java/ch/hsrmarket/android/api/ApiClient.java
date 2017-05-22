@@ -34,11 +34,21 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ApiClient implements ApiClient.OnJsonReady {
+interface OnJsonReady {
+    Object parse(Response response, int requestCode);
+}
+
+interface OnInternetReady{
+    void httpRequest();
+}
+
+public class ApiClient implements OnJsonReady {
 
     private static final int PARSE_ARTICLE_LIST = 2;
     private static final int PARSE_ARTICLE = 3;
     private static final int PARSE_ACCOUNT = 5;
+    private static final int PARSE_PURCHASE = 7;
+    private static final int PARSE_PURCHASE_TO_ARTICLE = 11;
 
     @Override
     public Object parse(Response response, int requestCode) {
@@ -85,6 +95,14 @@ public class ApiClient implements ApiClient.OnJsonReady {
             case PARSE_ACCOUNT:
                 return gson.fromJson(response.body().charStream(),Account.class);
 
+            case PARSE_PURCHASE:
+                return gson.fromJson(response.body().charStream(),Purchase.class);
+
+            case PARSE_PURCHASE_TO_ARTICLE:
+                Type typeList = new TypeToken<List<Purchase>>(){}.getType();
+                List<Purchase> purchases = gson.fromJson(response.body().charStream(),typeList);
+                return extractArticles(purchases);
+
             default:
                 throw new AssertionError("Forgot to implement");
         }
@@ -97,13 +115,7 @@ public class ApiClient implements ApiClient.OnJsonReady {
         public void onFailure(String msg, int requestCode);
     }
 
-    private interface OnJsonReady {
-         Object parse(Response response, int requestCode);
-    }
 
-    private interface OnInternetReady{
-        void httpRequest();
-    }
 
     public static final MediaType JSON_CONTENT_TYPE = MediaType.parse("application/json; charset=utf-8");
     private static final String TAG = ApiClient.class.getSimpleName();
@@ -272,7 +284,7 @@ public class ApiClient implements ApiClient.OnJsonReady {
             public void httpRequest() {
                 httpClient
                         .newCall(makePostRequest("/purchases",purchase))
-                        .enqueue(defaultCallback(null));
+                        .enqueue(defaultCallback(ApiClient.this,PARSE_PURCHASE));
             }
         });
 
@@ -331,14 +343,7 @@ public class ApiClient implements ApiClient.OnJsonReady {
             public void httpRequest() {
                 httpClient
                         .newCall(makeGetRequest("/user/"+accountId+getMyPath(myId)))
-                        .enqueue(defaultCallback(new OnJsonReady() {
-                            @Override
-                            public Object parse(Response response) {
-                                Type listType = new TypeToken<List<Purchase>>(){}.getType();
-                                List<Purchase> purchases = gson.fromJson(response.body().charStream(),listType);
-                                return extractArticles(purchases);
-                            }
-                        }));
+                        .enqueue(defaultCallback(ApiClient.this,PARSE_PURCHASE_TO_ARTICLE));
             }
         });
     }
