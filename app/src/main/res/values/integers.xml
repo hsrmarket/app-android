@@ -3,4 +3,5 @@
     <!-- For set the Tag on view (ListView) -->
     <integer name="article_id">11</integer>
     <integer name="article_type">13</integer>
+    <integer name="article_purchase_id">17</integer>
 </resources>

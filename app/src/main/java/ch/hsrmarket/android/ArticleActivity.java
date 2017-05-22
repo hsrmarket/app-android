@@ -30,6 +30,7 @@ public class ArticleActivity extends AppCompatActivity implements ApiClient.OnRe
 
     public static final int DISPLAY_WITH_BUY = 13;
     public static final int DISPLAY_ONLY = 21;
+    public static final int DISPLAY_PURCHASE = 34;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +54,7 @@ public class ArticleActivity extends AppCompatActivity implements ApiClient.OnRe
 
             case DISPLAY_WITH_BUY:
                 ApiClient apiClient = new ApiClient(getApplicationContext(),ARTICLE_REQUEST,this,this);
-                apiClient.requestSingleArticle(requestId);
+                apiClient.getArticle(requestId);
                 break;
 
         }

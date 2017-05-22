@@ -37,6 +37,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.CategoryViewHo
 
         holder.root.setTag(R.integer.article_id,article.getId());
         holder.root.setTag(R.integer.article_type,article.getType());
+        holder.root.setTag(R.integer.article_purchase_id,article.getPurchaseId());
 
         holder.name.setText(article.getName());
         holder.price.setText( article.getPrice());

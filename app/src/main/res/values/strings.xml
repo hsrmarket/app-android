@@ -7,6 +7,7 @@
 
     <string name="article_pass_id">requestedId</string>
     <string name="article_pass_type">requestedType</string>
+    <string name="article_pass_purchase_id">requestedPurchase</string>
     <string name="article_display_mode">displayMode</string>
 
     <string name="pref_credentials">accountData</string>
@@ -54,12 +55,12 @@
 
     <string name="register_email">Email</string>
     <string name="register_password">Password</string>
-    <string name="register_passwordConfirm">Confirm Password</string>
-    <string name="register_studentId">Student Id</string>
-    <string name="register_firstName">First Name</string>
-    <string name="register_lastName">Surname</string>
+    <string name="register_password_confirm">Confirm Password</string>
+    <string name="register_student_id">Student Id</string>
+    <string name="register_first_name">First Name</string>
+    <string name="register_last_name">Surname</string>
     <string name="register_street">Street</string>
-    <string name="register_streetNo">No.</string>
+    <string name="register_street_no">No.</string>
     <string name="register_city">City</string>
     <string name="register_zip">ZIP Code</string>
     <string name="register_phone">Phone No.</string>

@@ -102,7 +102,7 @@ public class MyListActivity extends AppCompatActivity implements NavigationView.
         Bundle bundle = new Bundle();
         bundle.putInt(getString(R.string.appointed_mylist),myId);
         bundle.putInt(getString(R.string.account_pass_id),accountId);
-        bundle.putInt(getString(R.string.request_origin), ListFragment.ORIGIN_MY_LIST);
+        bundle.putInt(getString(R.string.request_origin), getOriginRequestId(myId));
 
         ListFragment fragment = new ListFragment();
         fragment.setArguments(bundle);
@@ -112,6 +112,20 @@ public class MyListActivity extends AppCompatActivity implements NavigationView.
     private void setCurrentMyId(int myId){
         setTitle(getTitle(myId));
         appointedMyId = myId;
+    }
+
+    private int getOriginRequestId(int myId){
+        switch (myId){
+            case R.id.nav_articles:
+                return ListFragment.ORIGIN_MY_ARTICLES;
+
+            case R.id.nav_sales:
+            case R.id.nav_purchases:
+                return ListFragment.ORIGIN_PURCHASES_SALES;
+
+            default:
+                throw new AssertionError("Forgot to implement");
+        }
     }
 
     @Override

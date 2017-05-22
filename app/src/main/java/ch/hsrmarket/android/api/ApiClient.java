@@ -14,6 +14,7 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -131,7 +132,37 @@ public class ApiClient {
         }
     }
 
-    public void requestCategoryList(Article.Type category){
+    private void execute(OnInternetReady onInternetReady){
+        if(isOnline()){
+            onInternetReady.httpRequest();
+        }else {
+            misfireScenario(context.getString(R.string.msg_no_internet));
+        }
+    }
+
+    private String getMyPath(int myId){
+        switch (myId){
+            case R.id.nav_articles:
+                return "/articles";
+
+            case R.id.nav_sales:
+                return "/sales";
+
+            case R.id.nav_purchases:
+                return "/purchases";
+
+            default:
+                throw new AssertionError("Forgot to implement");
+        }
+    }
+
+    private boolean isOnline() {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
+    public void getArticleList(Article.Type category){
         String path = "/articles";
 
         switch (category){
@@ -170,7 +201,7 @@ public class ApiClient {
         });
     }
 
-    public void requestSingleArticle(final int id){
+    public void getArticle(final int id){
 
         execute(new OnInternetReady() {
             @Override
@@ -224,7 +255,7 @@ public class ApiClient {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String formattedDate = dateFormat.format(calendar.getTime());
-        final Purchase purchase = new Purchase(0,article, account,formattedDate,false);
+        final Purchase purchase = new Purchase(0,article, account,null,formattedDate,false);
 
         execute(new OnInternetReady() {
             @Override
@@ -288,12 +319,12 @@ public class ApiClient {
         });
     }
 
-    public void getMyList(final int accountId, final int myId){
+    public void getArticleList(final int accountId){
         execute(new OnInternetReady() {
             @Override
             public void httpRequest() {
                 httpClient
-                        .newCall(makeGetRequest("/user/"+accountId+getMyPath(myId)))
+                        .newCall(makeGetRequest("/user/"+accountId+"/articles"))
                         .enqueue(defaultCallback(new OnJsonReady() {
                             @Override
                             public Object parse(Response response) {
@@ -305,33 +336,34 @@ public class ApiClient {
         });
     }
 
-    private void execute(OnInternetReady onInternetReady){
-        if(isOnline()){
-            onInternetReady.httpRequest();
-        }else {
-            misfireScenario(context.getString(R.string.msg_no_internet));
+    public void getArticleList(final int accountId, final int myId){
+        execute(new OnInternetReady() {
+            @Override
+            public void httpRequest() {
+                httpClient
+                        .newCall(makeGetRequest("/user/"+accountId+getMyPath(myId)))
+                        .enqueue(defaultCallback(new OnJsonReady() {
+                            @Override
+                            public Object parse(Response response) {
+                                Type listType = new TypeToken<List<Purchase>>(){}.getType();
+                                List<Purchase> purchases = gson.fromJson(response.body().charStream(),listType);
+                                return extractArticles(purchases);
+                            }
+                        }));
+            }
+        });
+    }
+
+    private List<Article> extractArticles(List<Purchase> purchases){
+        List<Article> articles = new ArrayList<>();
+
+        for(Purchase p : purchases){
+            Article a = p.getArticle();
+            a.setPurchaseId(p.getId());
+            articles.add(a);
         }
+
+        return articles;
     }
 
-    private String getMyPath(int myId){
-        switch (myId){
-            case R.id.nav_articles:
-                return "/articles";
-
-            case R.id.nav_sales:
-                return "/sales";
-
-            case R.id.nav_purchases:
-                return "/purchases";
-
-            default:
-                throw new AssertionError("Forgot to implement");
-        }
-    }
-
-    private boolean isOnline() {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
-    }
 }

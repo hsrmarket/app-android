@@ -25,9 +25,9 @@ public class ListFragment extends Fragment implements ApiClient.OnResponseListen
     private int accountId;
     private int requestOrigin;
 
-    public static final int ORIGIN_MY_LIST = 3;
     public static final int ORIGIN_CATEGORY = 5;
-
+    public static final int ORIGIN_MY_ARTICLES = 7;
+    public static final int ORIGIN_PURCHASES_SALES = 13;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_list, container, false);
@@ -55,10 +55,13 @@ public class ListFragment extends Fragment implements ApiClient.OnResponseListen
 
         switch (requestOrigin){
             case ORIGIN_CATEGORY:
-                apiClient.requestCategoryList(appointedCategory);
+                apiClient.getArticleList(appointedCategory);
                 break;
-            case ORIGIN_MY_LIST:
-                apiClient.getMyList(accountId,appointedMyList);
+            case ORIGIN_MY_ARTICLES:
+                apiClient.getArticleList(accountId);
+                break;
+            case ORIGIN_PURCHASES_SALES:
+                apiClient.getArticleList(accountId,appointedMyList);
                 break;
         }
     }
@@ -87,16 +90,22 @@ public class ListFragment extends Fragment implements ApiClient.OnResponseListen
     public void onClick(View view, int position) {
         Integer id = (Integer) view.getTag(R.integer.article_id);
         Article.Type type = (Article.Type) view.getTag(R.integer.article_type);
+        Integer purchaseId = (Integer) view.getTag(R.integer.article_purchase_id);
 
         Intent intent = new Intent(getContext(),ArticleActivity.class);
         intent.putExtra(getString(R.string.article_pass_id),id);
         intent.putExtra(getString(R.string.article_pass_type),type);
+        intent.putExtra(getString(R.string.article_pass_purchase_id),purchaseId);
 
         switch (requestOrigin){
             case ORIGIN_CATEGORY:
                 intent.putExtra(getString(R.string.article_display_mode),ArticleActivity.DISPLAY_WITH_BUY);
                 break;
-            case ORIGIN_MY_LIST:
+            case ORIGIN_MY_ARTICLES:
+                intent.putExtra(getString(R.string.article_display_mode),ArticleActivity.DISPLAY_ONLY);
+                break;
+            case ORIGIN_PURCHASES_SALES:
+                //TODO switch to DISPLAY_PURCHAESE
                 intent.putExtra(getString(R.string.article_display_mode),ArticleActivity.DISPLAY_ONLY);
                 break;
         }
@@ -104,4 +113,3 @@ public class ListFragment extends Fragment implements ApiClient.OnResponseListen
         startActivity(intent);
     }
 }
-
