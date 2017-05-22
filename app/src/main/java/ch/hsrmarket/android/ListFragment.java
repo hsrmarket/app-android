@@ -105,8 +105,7 @@ public class ListFragment extends Fragment implements ApiClient.OnResponseListen
                 intent.putExtra(getString(R.string.article_display_mode),ArticleActivity.DISPLAY_ONLY);
                 break;
             case ORIGIN_PURCHASES_SALES:
-                //TODO switch to DISPLAY_PURCHAESE
-                intent.putExtra(getString(R.string.article_display_mode),ArticleActivity.DISPLAY_ONLY);
+                intent.putExtra(getString(R.string.article_display_mode),ArticleActivity.DISPLAY_PURCHASE);
                 break;
         }
 

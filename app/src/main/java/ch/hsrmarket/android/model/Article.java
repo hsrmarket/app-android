@@ -69,8 +69,14 @@ public class Article {
         this.price = price;
     }
 
-    public int getCondition() {
-        return condition;
+    public String getCondition() {
+        String retVal = "";
+
+        for(int i = 0 ; i < condition; i++){
+            retVal += "\uD83D\uDD25";
+        }
+
+        return retVal;
     }
 
     public void setCondition(int condition) {

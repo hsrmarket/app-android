@@ -81,7 +81,7 @@ public class ApiClient implements OnJsonReady, OnInternetReady {
         return new Request.Builder().url(BASE_URL+Path).post(body).build();
     }
 
-    private Callback defaultCallback(final OnJsonReady onJsonReady, final int requestCode){
+    private Callback makeCallback(final OnJsonReady onJsonReady, final int requestCode){
         return new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -168,6 +168,10 @@ public class ApiClient implements OnJsonReady, OnInternetReady {
         return articles;
     }
 
+    public void setRequestCode(int requestCode){
+        this.requestCode = requestCode;
+    }
+
     private boolean isOnline() {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
@@ -232,6 +236,10 @@ public class ApiClient implements OnJsonReady, OnInternetReady {
         execute(ApiClient.this, GET_MY_LIST, "/user/"+accountId+getMyPath(myId));
     }
 
+    public void getPurchase(int id){
+        execute(ApiClient.this, GET_PURCHASE,"/purchases/"+id);
+    }
+
     private static final int PARSE_ARTICLE_LIST = 2;
     private static final int PARSE_ARTICLE = 3;
     private static final int PARSE_ACCOUNT = 5;
@@ -245,6 +253,7 @@ public class ApiClient implements OnJsonReady, OnInternetReady {
     private static final int GET_ACCOUNT = 29;
     private static final int GET_MY_ARTICLES = 31;
     private static final int GET_MY_LIST = 37;
+    private static final int GET_PURCHASE = 41;
 
     @Override
     public Object parse(Response response, int requestCode) {
@@ -317,43 +326,49 @@ public class ApiClient implements OnJsonReady, OnInternetReady {
             case GET_ARTICLE_LIST:
                 httpClient
                         .newCall(makeGetRequest(path))
-                        .enqueue(defaultCallback(ApiClient.this,PARSE_ARTICLE_LIST));
+                        .enqueue(makeCallback(ApiClient.this,PARSE_ARTICLE_LIST));
                 break;
 
             case GET_ARTICLE:
                 httpClient
                         .newCall(makeGetRequest(path))
-                        .enqueue(defaultCallback(ApiClient.this,PARSE_ARTICLE));
+                        .enqueue(makeCallback(ApiClient.this,PARSE_ARTICLE));
                 break;
 
             case POST_PURCHASE:
                 httpClient
                         .newCall(makePostRequest(path,postBody))
-                        .enqueue(defaultCallback(ApiClient.this,PARSE_PURCHASE));
+                        .enqueue(makeCallback(ApiClient.this,PARSE_PURCHASE));
                 break;
 
             case POST_ACCOUNT:
                 httpClient
                         .newCall(makePostRequest(path, postBody))
-                        .enqueue(defaultCallback(ApiClient.this,PARSE_ACCOUNT));
+                        .enqueue(makeCallback(ApiClient.this,PARSE_ACCOUNT));
                 break;
 
             case GET_ACCOUNT:
                 httpClient
                         .newCall(makeGetRequest(path))
-                        .enqueue(defaultCallback(ApiClient.this,PARSE_ACCOUNT));
+                        .enqueue(makeCallback(ApiClient.this,PARSE_ACCOUNT));
                 break;
 
             case GET_MY_ARTICLES:
                 httpClient
                         .newCall(makeGetRequest(path))
-                        .enqueue(defaultCallback(ApiClient.this,PARSE_ARTICLE_LIST));
+                        .enqueue(makeCallback(ApiClient.this,PARSE_ARTICLE_LIST));
                 break;
 
             case GET_MY_LIST:
                 httpClient
                         .newCall(makeGetRequest(path))
-                        .enqueue(defaultCallback(ApiClient.this,PARSE_PURCHASE_TO_ARTICLE));
+                        .enqueue(makeCallback(ApiClient.this,PARSE_PURCHASE_TO_ARTICLE));
+                break;
+
+            case GET_PURCHASE:
+                httpClient
+                        .newCall(makeGetRequest(path))
+                        .enqueue(makeCallback(ApiClient.this,PARSE_PURCHASE));
                 break;
 
             default:
