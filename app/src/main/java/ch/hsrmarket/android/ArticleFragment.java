@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import ch.hsrmarket.android.api.ApiClient;
@@ -30,11 +31,17 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
     private FloatingActionButton fab;
     private Article.Type type;
     private Article currentArticle;
+
+    private int receivedArticleId;
+    private int receivedPurchaseId;
+    private int chosenDisplay;
+
     private View rootView;
 
     public static final int GET_ARTICLE = 1;
     public static final int POST_PURCHASE = 2;
     public static final int GET_PURCHASE = 3;
+    public static final int PATCH_PURCHASE = 4;
 
 
     @Override
@@ -45,32 +52,48 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
         fab.setOnClickListener(this);
 
         Bundle bundle = getArguments();
-        int receivedArticleId = bundle.getInt(getString(R.string.article_pass_id),-1);
+        receivedArticleId = bundle.getInt(getString(R.string.article_pass_id),-1);
         type = (Article.Type) bundle.getSerializable(getString(R.string.article_pass_type));
-        int receivedPurchaseId = bundle.getInt(getString(R.string.article_pass_purchase_id),-1);
+        receivedPurchaseId = bundle.getInt(getString(R.string.article_pass_purchase_id),-1);
 
-        int chosenDisplay = bundle.getInt(getString(R.string.article_display_mode),-1);
+        chosenDisplay = bundle.getInt(getString(R.string.article_display_mode),-1);
 
+
+        return rootView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         ApiClient acOne, acTwo;
-        acOne = new ApiClient(getContext(), GET_ARTICLE,this,this);
 
         switch (chosenDisplay){
             case DISPLAY_PURCHASE:
+                fab.setImageResource(R.drawable.ic_done);
+
+                acOne = new ApiClient(getContext(), GET_ARTICLE,this,this);
+                acOne.getArticle(receivedArticleId);
+
                 acTwo = new ApiClient(getContext(), GET_PURCHASE,this,this);
                 acTwo.getPurchase(receivedPurchaseId);
+
+                break;
 
             case DISPLAY_ONLY:
                 fab.setVisibility(View.GONE);
 
-            case DISPLAY_WITH_BUY:
+                acOne = new ApiClient(getContext(), GET_ARTICLE,this,this);
                 acOne.getArticle(receivedArticleId);
 
                 break;
 
+            case DISPLAY_WITH_BUY:
+                acOne = new ApiClient(getContext(), GET_ARTICLE,this,this);
+                acOne.getArticle(receivedArticleId);
 
+                break;
         }
 
-        return rootView;
     }
 
     @Override
@@ -82,6 +105,7 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
 
             case POST_PURCHASE:
                 Toast.makeText(getContext(),getString(R.string.msg_successful_purchased),Toast.LENGTH_SHORT).show();
+                fab.setEnabled(true);
                 getActivity().finish();
                 break;
 
@@ -90,15 +114,27 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
                 String status = purchase.isCompleted() ? getString(R.string.status_done): getString(R.string.status_open);
                 String[] texts = new String[]{status, purchase.getDate()};
 
+                if(purchase.isCompleted()){
+                    fab.setVisibility(View.GONE);
+                }
+
                 loadPurchaseInfo(texts);
+                break;
+
+            case PATCH_PURCHASE:
+                onStart();
 
                 break;
         }
+
+        LinearLayout linearLayout = (LinearLayout) rootView.findViewById(R.id.article_base_layout);
+        linearLayout.requestFocus();
     }
 
     @Override
     public void onFailure(String msg, int requestCode) {
                 Toast.makeText(getContext(),msg, Toast.LENGTH_SHORT).show();
+                fab.setEnabled(true);
                 getActivity().finish();
     }
 
@@ -221,25 +257,35 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
 
     @Override
     public void onClick(View v) {
+        SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.pref_credentials), Context.MODE_PRIVATE);
+        String accountJson = sharedPref.getString(getString(R.string.secret_account),"");
 
-        switch (v.getId()){
-            case R.id.fab_buy:
+        if(accountJson.length() != 0){
 
-                SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.pref_credentials), Context.MODE_PRIVATE);
-                String accountJson = sharedPref.getString(getString(R.string.secret_account),"");
+            ApiClient apiClient;
 
-                if(accountJson.length() != 0){
+            switch (chosenDisplay){
+                case DISPLAY_WITH_BUY:
+
                     Account account = Account.makeAccount(accountJson);
                     fab.setEnabled(false);
 
-                    ApiClient apiClient = new ApiClient(getContext(), POST_PURCHASE, this, this);
+                    apiClient = new ApiClient(getContext(), POST_PURCHASE, this, this);
                     apiClient.postPurchase(currentArticle, account);
-                }else{
-                    Toast.makeText(getContext(),getString(R.string.msg_login_first),Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(getContext(),LoginActivity.class));
-                }
 
-                break;
+                    break;
+
+                case DISPLAY_PURCHASE:
+                    apiClient = new ApiClient(getContext(), PATCH_PURCHASE, this, this);
+                    apiClient.patchPurchaseCompleted(receivedPurchaseId);
+
+                    break;
+            }
+
+
+        }else{
+            Toast.makeText(getContext(),getString(R.string.msg_login_first),Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(getContext(),LoginActivity.class));
         }
 
     }

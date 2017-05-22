@@ -9,6 +9,9 @@ import android.os.Looper;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
@@ -79,6 +82,11 @@ public class ApiClient implements OnJsonReady, OnInternetReady {
         String json = gson.toJson(obj,obj.getClass());
         RequestBody body = RequestBody.create(JSON_CONTENT_TYPE,json);
         return new Request.Builder().url(BASE_URL+Path).post(body).build();
+    }
+
+    private Request makePatchRequest(String Path, String json){
+        RequestBody body = RequestBody.create(JSON_CONTENT_TYPE,json);
+        return new Request.Builder().url(BASE_URL+Path).patch(body).build();
     }
 
     private Callback makeCallback(final OnJsonReady onJsonReady, final int requestCode){
@@ -168,10 +176,6 @@ public class ApiClient implements OnJsonReady, OnInternetReady {
         return articles;
     }
 
-    public void setRequestCode(int requestCode){
-        this.requestCode = requestCode;
-    }
-
     private boolean isOnline() {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
@@ -240,6 +244,13 @@ public class ApiClient implements OnJsonReady, OnInternetReady {
         execute(ApiClient.this, GET_PURCHASE,"/purchases/"+id);
     }
 
+    public void patchPurchaseCompleted(int id){
+        JsonObject obj = new JsonObject();
+        obj.addProperty("completed",true);
+
+        execute(ApiClient.this, PATCH_PURCHASE,"/purchases/"+id,gson.toJson(obj));
+    }
+
     private static final int PARSE_ARTICLE_LIST = 2;
     private static final int PARSE_ARTICLE = 3;
     private static final int PARSE_ACCOUNT = 5;
@@ -254,6 +265,7 @@ public class ApiClient implements OnJsonReady, OnInternetReady {
     private static final int GET_MY_ARTICLES = 31;
     private static final int GET_MY_LIST = 37;
     private static final int GET_PURCHASE = 41;
+    private static final int PATCH_PURCHASE = 43;
 
     @Override
     public Object parse(Response response, int requestCode) {
@@ -369,6 +381,15 @@ public class ApiClient implements OnJsonReady, OnInternetReady {
                 httpClient
                         .newCall(makeGetRequest(path))
                         .enqueue(makeCallback(ApiClient.this,PARSE_PURCHASE));
+                break;
+
+            case PATCH_PURCHASE:
+                String body = (String) args[1];
+
+                httpClient
+                        .newCall(makePatchRequest(path,body))
+                        .enqueue(makeCallback(ApiClient.this, PARSE_PURCHASE));
+
                 break;
 
             default:
