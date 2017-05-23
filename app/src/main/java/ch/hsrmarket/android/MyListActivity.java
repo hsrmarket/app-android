@@ -119,8 +119,10 @@ public class MyListActivity extends AppCompatActivity implements NavigationView.
                 return ListFragment.ORIGIN_MY_ARTICLES;
 
             case R.id.nav_sales:
+                return ListFragment.ORIGIN_MY_SALES;
+
             case R.id.nav_purchases:
-                return ListFragment.ORIGIN_PURCHASES_SALES;
+                return ListFragment.ORIGIN_MY_PURCHASES;
 
             default:
                 throw new AssertionError("Forgot to implement");

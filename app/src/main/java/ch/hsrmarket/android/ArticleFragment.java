@@ -31,6 +31,7 @@ import ch.hsrmarket.android.model.Purchase;
 import static ch.hsrmarket.android.ArticleActivity.DISPLAY_ADD;
 import static ch.hsrmarket.android.ArticleActivity.DISPLAY_ONLY;
 import static ch.hsrmarket.android.ArticleActivity.DISPLAY_PURCHASE;
+import static ch.hsrmarket.android.ArticleActivity.DISPLAY_SALE;
 import static ch.hsrmarket.android.ArticleActivity.DISPLAY_WITH_BUY;
 
 public class ArticleFragment extends Fragment implements ApiClient.OnResponseListener, ApiClient.OnFailureListener, View.OnClickListener, Spinner.OnItemSelectedListener {
@@ -89,6 +90,16 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
         ApiClient acOne, acTwo;
 
         switch (displayMode){
+            case DISPLAY_SALE:
+                fab.setVisibility(View.GONE);
+
+                acOne = new ApiClient(getContext(), GET_ARTICLE,this,this);
+                acOne.getArticle(receivedArticleId);
+
+                acTwo = new ApiClient(getContext(), GET_PURCHASE,this,this);
+                acTwo.getPurchase(receivedPurchaseId);
+
+                break;
             case DISPLAY_PURCHASE:
                 fab.setImageResource(R.drawable.ic_done);
 

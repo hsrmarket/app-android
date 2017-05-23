@@ -28,7 +28,8 @@ public class ListFragment extends Fragment implements ApiClient.OnResponseListen
 
     public static final int ORIGIN_CATEGORY = 5;
     public static final int ORIGIN_MY_ARTICLES = 7;
-    public static final int ORIGIN_PURCHASES_SALES = 13;
+    public static final int ORIGIN_MY_PURCHASES = 11;
+    public static final int ORIGIN_MY_SALES = 13;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_list, container, false);
@@ -61,7 +62,8 @@ public class ListFragment extends Fragment implements ApiClient.OnResponseListen
             case ORIGIN_MY_ARTICLES:
                 apiClient.getArticleList(accountId);
                 break;
-            case ORIGIN_PURCHASES_SALES:
+            case ORIGIN_MY_PURCHASES:
+            case ORIGIN_MY_SALES:
                 apiClient.getArticleList(accountId,appointedMyList);
                 break;
         }
@@ -103,9 +105,13 @@ public class ListFragment extends Fragment implements ApiClient.OnResponseListen
             case ORIGIN_MY_ARTICLES:
                 intent.putExtra(getString(R.string.article_display_mode),ArticleActivity.DISPLAY_ONLY);
                 break;
-            case ORIGIN_PURCHASES_SALES:
+            case ORIGIN_MY_PURCHASES:
                 intent.putExtra(getString(R.string.pass_account_id),article.getSellerId());
                 intent.putExtra(getString(R.string.article_display_mode),ArticleActivity.DISPLAY_PURCHASE);
+                break;
+            case ORIGIN_MY_SALES:
+                intent.putExtra(getString(R.string.pass_account_id),article.getBuyerId());
+                intent.putExtra(getString(R.string.article_display_mode),ArticleActivity.DISPLAY_SALE);
                 break;
         }
 

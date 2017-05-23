@@ -2,6 +2,7 @@ package ch.hsrmarket.android;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,6 +17,7 @@ public class ArticleActivity extends AppCompatActivity{
     public static final int DISPLAY_WITH_BUY = 13;
     public static final int DISPLAY_ONLY = 21;
     public static final int DISPLAY_PURCHASE = 34;
+    public static final int DISPLAY_SALE = 35;
     public static final int DISPLAY_ADD = 55;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,28 +37,19 @@ public class ArticleActivity extends AppCompatActivity{
 
         switch (displayMode){
             case DISPLAY_PURCHASE:
-                ArticleFragment articleFragment = new ArticleFragment();
-                articleFragment.setArguments(bundle);
-                adapter.addFragment(articleFragment,getString(R.string.tab_article));
+                adapter.addFragment(getArticleFragment(bundle),getString(R.string.tab_article));
+                adapter.addFragment(getAccountFragment(accountId),getString(R.string.tab_seller));
+                break;
 
-                AccountFragment accountFragment = new AccountFragment();
-
-                Bundle args = new Bundle();
-                args.putInt(getString(R.string.account_display_mode),AccountFragment.DISPLAY_ONLY);
-                args.putInt(getString(R.string.pass_account_id),accountId);
-
-                accountFragment.setArguments(args);
-                adapter.addFragment(accountFragment,getString(R.string.tab_seller));
-
+            case DISPLAY_SALE:
+                adapter.addFragment(getArticleFragment(bundle),getString(R.string.tab_article));
+                adapter.addFragment(getAccountFragment(accountId),getString(R.string.tab_buyer));
                 break;
 
             case DISPLAY_ONLY:
             case DISPLAY_WITH_BUY:
             case DISPLAY_ADD:
-                ArticleFragment fragment = new ArticleFragment();
-                fragment.setArguments(bundle);
-
-                adapter.addFragment(fragment,getString(R.string.tab_article));
+                adapter.addFragment(getArticleFragment(bundle),getString(R.string.tab_article));
                 break;
 
         }
@@ -65,9 +58,27 @@ public class ArticleActivity extends AppCompatActivity{
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-        if(displayMode != DISPLAY_PURCHASE) {
+        if(displayMode != DISPLAY_PURCHASE && displayMode != DISPLAY_SALE) {
             tabLayout.setVisibility(View.GONE);
         }
+    }
+
+    private Fragment getArticleFragment(Bundle bundle){
+        ArticleFragment fragment = new ArticleFragment();
+        fragment.setArguments(bundle);
+        return  fragment;
+    }
+
+
+    private Fragment getAccountFragment(int accountId){
+        AccountFragment fragment = new AccountFragment();
+
+        Bundle args = new Bundle();
+        args.putInt(getString(R.string.account_display_mode),AccountFragment.DISPLAY_ONLY);
+        args.putInt(getString(R.string.pass_account_id),accountId);
+
+        fragment.setArguments(args);
+        return  fragment;
     }
 
     @Override
