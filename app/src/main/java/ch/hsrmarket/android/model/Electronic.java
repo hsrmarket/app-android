@@ -17,6 +17,12 @@ public class Electronic extends Article {
         this.model = model;
     }
 
+    public Electronic(String name, double price, int condition, String description, String producer, String model) {
+        super(name, price, condition, description, Type.ELECTRONIC_DEVICE);
+        this.producer = producer;
+        this.model = model;
+    }
+
     public String getProducer() {
         return producer;
     }

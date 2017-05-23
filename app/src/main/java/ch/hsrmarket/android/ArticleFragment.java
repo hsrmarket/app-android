@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -23,6 +24,8 @@ import ch.hsrmarket.android.model.Account;
 import ch.hsrmarket.android.model.Article;
 import ch.hsrmarket.android.model.Book;
 import ch.hsrmarket.android.model.Electronic;
+import ch.hsrmarket.android.model.OfficeSupply;
+import ch.hsrmarket.android.model.Other;
 import ch.hsrmarket.android.model.Purchase;
 
 import static ch.hsrmarket.android.ArticleActivity.DISPLAY_ADD;
@@ -31,6 +34,9 @@ import static ch.hsrmarket.android.ArticleActivity.DISPLAY_PURCHASE;
 import static ch.hsrmarket.android.ArticleActivity.DISPLAY_WITH_BUY;
 
 public class ArticleFragment extends Fragment implements ApiClient.OnResponseListener, ApiClient.OnFailureListener, View.OnClickListener, Spinner.OnItemSelectedListener {
+
+    TextInputEditText etName, etDescription, etPrice, etCondition, etCreatedAt, etId;
+    TextInputEditText etExtra1, etExtra2, etExtra3;
 
     private FloatingActionButton fab;
     private Article.Type type;
@@ -46,6 +52,7 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
     public static final int POST_PURCHASE = 2;
     public static final int GET_PURCHASE = 3;
     public static final int PATCH_PURCHASE = 4;
+    public static final int POST_ARTICLE = 5;
 
 
     @Override
@@ -62,6 +69,16 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
 
         chosenDisplay = bundle.getInt(getString(R.string.article_display_mode),-1);
 
+        etName = (TextInputEditText) rootView.findViewById(R.id.article_name);
+        etDescription = (TextInputEditText) rootView.findViewById(R.id.article_description);
+        etPrice = (TextInputEditText) rootView.findViewById(R.id.article_price);
+        etCondition = (TextInputEditText) rootView.findViewById(R.id.article_condition);
+        etCreatedAt = (TextInputEditText) rootView.findViewById(R.id.article_created_at);
+        etId = (TextInputEditText) rootView.findViewById(R.id.article_id);
+
+        etExtra1 = (TextInputEditText) rootView.findViewById(R.id.article_extra1);
+        etExtra2 = (TextInputEditText) rootView.findViewById(R.id.article_extra2);
+        etExtra3 = (TextInputEditText) rootView.findViewById(R.id.article_extra3);
 
         return rootView;
     }
@@ -149,6 +166,12 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
                 onStart();
 
                 break;
+
+            case POST_ARTICLE:
+                Toast.makeText(getContext(),getString(R.string.msg_successful_new_article),Toast.LENGTH_SHORT).show();
+                getActivity().finish();
+
+                break;
         }
 
         LinearLayout linearLayout = (LinearLayout) rootView.findViewById(R.id.article_base_layout);
@@ -165,15 +188,6 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
     private void loadExistingArticle(Object data){
         currentArticle = (Article) data;
         getActivity().setTitle(currentArticle.getName());
-
-        TextInputEditText etName, etDescription, etPrice, etCondition, etCreatedAt, etId;
-
-        etName = (TextInputEditText) rootView.findViewById(R.id.article_name);
-        etDescription = (TextInputEditText) rootView.findViewById(R.id.article_description);
-        etPrice = (TextInputEditText) rootView.findViewById(R.id.article_price);
-        etCondition = (TextInputEditText) rootView.findViewById(R.id.article_condition);
-        etCreatedAt = (TextInputEditText) rootView.findViewById(R.id.article_created_at);
-        etId = (TextInputEditText) rootView.findViewById(R.id.article_id);
 
         TextInputEditText[] basicViews = new TextInputEditText[]{etDescription, etPrice, etCondition, etCreatedAt, etId};
 
@@ -214,12 +228,7 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
     }
 
     private void showBookViews(Boolean disabled, String... args){
-        TextInputEditText etExtra1, etExtra2, etExtra3;
         TextInputLayout ilExtra1, ilExtra2, ilExtra3;
-
-        etExtra1 = (TextInputEditText) rootView.findViewById(R.id.article_extra1);
-        etExtra2 = (TextInputEditText) rootView.findViewById(R.id.article_extra2);
-        etExtra3 = (TextInputEditText) rootView.findViewById(R.id.article_extra3);
 
         ilExtra1 = (TextInputLayout) rootView.findViewById(R.id.article_hint_extra1);
         ilExtra2 = (TextInputLayout) rootView.findViewById(R.id.article_hint_extra2);
@@ -244,11 +253,7 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
     }
 
     private void showElectronicViews(Boolean disabled, String... args){
-        TextInputEditText etExtra1, etExtra2;
         TextInputLayout ilExtra1, ilExtra2;
-
-        etExtra1 = (TextInputEditText) rootView.findViewById(R.id.article_extra1);
-        etExtra2 = (TextInputEditText) rootView.findViewById(R.id.article_extra2);
 
         ilExtra1 = (TextInputLayout) rootView.findViewById(R.id.article_hint_extra1);
         ilExtra2 = (TextInputLayout) rootView.findViewById(R.id.article_hint_extra2);
@@ -271,15 +276,25 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
     }
 
     private void disappearExtraViews(){
-        TextInputEditText etExtra1, etExtra2, etExtra3;
-
-        etExtra1 = (TextInputEditText) rootView.findViewById(R.id.article_extra1);
-        etExtra2 = (TextInputEditText) rootView.findViewById(R.id.article_extra2);
-        etExtra3 = (TextInputEditText) rootView.findViewById(R.id.article_extra3);
-
         TextInputEditText[] extraViews = new TextInputEditText[]{etExtra1, etExtra2, etExtra3};
-
         setGone(extraViews);
+    }
+
+    private boolean isNewArticleValid(){
+        EditText[] basicViews = new EditText[]{etName, etDescription, etPrice, etCondition};
+        EditText[] bookViews = new EditText[]{etExtra1, etExtra2, etExtra3};
+        EditText[] electronicViews = new EditText[]{etExtra1, etExtra2};
+
+        switch (type){
+            case BOOK:
+                return !isEmpty(basicViews) && !isEmpty(bookViews);
+
+            case ELECTRONIC_DEVICE:
+                return !isEmpty(basicViews) && !isEmpty(electronicViews);
+
+            default:
+                return !isEmpty(basicViews);
+        }
     }
 
     private void setDisabled(View[] views){
@@ -312,6 +327,50 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
         }
     }
 
+    private boolean isEmpty(EditText[] editTexts){
+        boolean retVal = false;
+
+        for(EditText et : editTexts){
+            if(et.getText().toString().isEmpty()){
+                et.setError(getString(R.string.msg_form_empty));
+                retVal = true;
+            }
+        }
+
+        return retVal;
+    }
+
+    private String getString(EditText editText){
+        return editText.getText().toString();
+    }
+
+    private int getInt(EditText editText){
+        return Integer.parseInt(editText.getText().toString());
+    }
+
+    private double getDouble(EditText editText){
+        return Double.parseDouble(editText.getText().toString());
+    }
+
+    private Object getNewArticle(){
+        switch (type){
+            case BOOK:
+                return new Book(getString(etName),getDouble(etPrice),getInt(etCondition),getString(etDescription),getString(etExtra3),getString(etExtra1),getString(etExtra2));
+
+            case ELECTRONIC_DEVICE:
+                return new Electronic(getString(etName),getDouble(etPrice),getInt(etCondition),getString(etDescription),getString(etExtra1),getString(etExtra2));
+
+            case OFFICE_SUPPLY:
+                return new OfficeSupply(getString(etName),getDouble(etPrice),getInt(etCondition),getString(etDescription));
+
+            case OTHER:
+                return new Other(getString(etName),getDouble(etPrice),getInt(etCondition),getString(etDescription));
+
+            default:
+                throw new AssertionError("Forgot to implement");
+        }
+    }
+
     @Override
     public void onClick(View v) {
         SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.pref_credentials), Context.MODE_PRIVATE);
@@ -320,11 +379,11 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
         if(accountJson.length() != 0){
 
             ApiClient apiClient;
+            Account account = Account.makeAccount(accountJson);
 
             switch (chosenDisplay){
                 case DISPLAY_WITH_BUY:
 
-                    Account account = Account.makeAccount(accountJson);
                     fab.setEnabled(false);
 
                     apiClient = new ApiClient(getContext(), POST_PURCHASE, this, this);
@@ -337,6 +396,14 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
                     apiClient.patchPurchaseCompleted(receivedPurchaseId);
 
                     break;
+
+                case DISPLAY_ADD:
+                    if(isNewArticleValid()){
+                        Article newArticle = (Article) getNewArticle();
+
+                        apiClient = new ApiClient(getContext(),POST_ARTICLE,this,this);
+                        apiClient.postArticle(account.getId(), newArticle);
+                    }
             }
 
 

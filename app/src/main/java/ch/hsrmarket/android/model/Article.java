@@ -2,14 +2,35 @@ package ch.hsrmarket.android.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class Article {
 
     public enum Type{
-        @SerializedName("book") BOOK,
-        @SerializedName("electronic") ELECTRONIC_DEVICE,
-        @SerializedName("office supply") OFFICE_SUPPLY,
-        @SerializedName("other") OTHER,
-        UNKOWN
+        @SerializedName("book")
+        BOOK("book"),
+
+        @SerializedName("electronic")
+        ELECTRONIC_DEVICE("electronic"),
+
+        @SerializedName("office supply")
+        OFFICE_SUPPLY("office supply"),
+
+        @SerializedName("other")
+        OTHER("other"),
+
+        UNKOWN("null");
+
+        private final String name;
+
+        Type(String s) {
+            name = s;
+        }
+
+        public String toString() {
+            return this.name;
+        }
     }
 
     @SerializedName("id")
@@ -36,6 +57,9 @@ public class Article {
     @SerializedName("type")
     private Type type;
 
+    @SerializedName("createdby")
+    private int createdby;
+
     private int purchaseId;
 
     public Article(int id, String name, double price, int condition, String description, String createdAt, String imagePath, Type type) {
@@ -47,6 +71,21 @@ public class Article {
         this.createdAt = createdAt;
         this.imagePath = imagePath;
         this.type = type;
+    }
+
+    public Article(String name, double price, int condition, String description, Type type) {
+        this.name = name;
+        this.price = price;
+        this.condition = condition;
+        this.description = description;
+        this.type = type;
+        this.imagePath = "";
+
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String formattedDate = dateFormat.format(calendar.getTime());
+
+        this.createdAt = formattedDate;
     }
 
     public int getId() {
@@ -127,6 +166,10 @@ public class Article {
        return purchaseId;
     }
 
+    public void setCreatedBy(int createdby){
+        this.createdby = createdby;
+    }
+
     @Override
     public String toString() {
         return "Article{" +
@@ -138,6 +181,8 @@ public class Article {
                 ", createdAt='" + createdAt + '\'' +
                 ", imagePath='" + imagePath + '\'' +
                 ", type=" + type +
+                ", createdBy=" + createdby +
+                ", purchaseId=" + purchaseId +
                 '}';
     }
 }

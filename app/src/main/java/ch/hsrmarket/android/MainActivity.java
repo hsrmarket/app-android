@@ -157,7 +157,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 addArticleIntent.putExtra(getString(R.string.article_display_mode),ArticleActivity.DISPLAY_ADD);
 
                 startActivity(addArticleIntent);
-
                 break;
         }
 

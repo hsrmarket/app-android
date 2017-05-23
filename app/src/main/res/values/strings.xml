@@ -82,6 +82,7 @@
     <string name="register_phone">Phone No.</string>
 
     <string name="msg_successful_purchased">Your purchase is successful.</string>
+    <string name="msg_successful_new_article">Your new article was successfully added.</string>
     <string name="msg_no_internet">There is no Internet connection available. Please check your Internet connection.</string>
     <string name="msg_listview_empty">No articles available.</string>
     <string name="msg_fail_login">Your email or password is invalid. Please try again.</string>

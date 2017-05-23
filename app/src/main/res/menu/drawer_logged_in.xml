@@ -19,10 +19,6 @@
             android:title="@string/menu_purchases" />
 
         <item
-            android:id="@+id/nav_account"
-            android:title="@string/menu_account" />
-
-        <item
             android:id="@+id/nav_add_article"
             android:title="@string/menu_add_article" />
 

@@ -251,6 +251,11 @@ public class ApiClient implements OnJsonReady, OnInternetReady {
         execute(ApiClient.this, PATCH_PURCHASE,"/purchases/"+id,gson.toJson(obj));
     }
 
+    public void postArticle(int accountId, Article article){
+        article.setCreatedBy(accountId);
+        execute(ApiClient.this, POST_ARTICLE, "/articles",article);
+    }
+
     private static final int PARSE_ARTICLE_LIST = 2;
     private static final int PARSE_ARTICLE = 3;
     private static final int PARSE_ACCOUNT = 5;
@@ -266,6 +271,7 @@ public class ApiClient implements OnJsonReady, OnInternetReady {
     private static final int GET_MY_LIST = 37;
     private static final int GET_PURCHASE = 41;
     private static final int PATCH_PURCHASE = 43;
+    private static final int POST_ARTICLE = 47;
 
     @Override
     public Object parse(Response response, int requestCode) {
@@ -390,6 +396,12 @@ public class ApiClient implements OnJsonReady, OnInternetReady {
                         .newCall(makePatchRequest(path,body))
                         .enqueue(makeCallback(ApiClient.this, PARSE_PURCHASE));
 
+                break;
+
+            case POST_ARTICLE:
+                httpClient
+                        .newCall(makePostRequest(path, postBody))
+                        .enqueue(makeCallback(ApiClient.this,PARSE_ARTICLE));
                 break;
 
             default:
