@@ -14,6 +14,8 @@ public class ArticleActivity extends AppCompatActivity{
     public static final int DISPLAY_WITH_BUY = 13;
     public static final int DISPLAY_ONLY = 21;
     public static final int DISPLAY_PURCHASE = 34;
+    public static final int DISPLAY_ADD = 55;
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +35,7 @@ public class ArticleActivity extends AppCompatActivity{
             case DISPLAY_ONLY:
             case DISPLAY_WITH_BUY:
             case DISPLAY_PURCHASE:
+            case DISPLAY_ADD:
                 ArticleFragment fragment = new ArticleFragment();
                 fragment.setArguments(bundle);
 

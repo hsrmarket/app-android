@@ -12,7 +12,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import ch.hsrmarket.android.api.ApiClient;
@@ -22,11 +25,12 @@ import ch.hsrmarket.android.model.Book;
 import ch.hsrmarket.android.model.Electronic;
 import ch.hsrmarket.android.model.Purchase;
 
+import static ch.hsrmarket.android.ArticleActivity.DISPLAY_ADD;
 import static ch.hsrmarket.android.ArticleActivity.DISPLAY_ONLY;
 import static ch.hsrmarket.android.ArticleActivity.DISPLAY_PURCHASE;
 import static ch.hsrmarket.android.ArticleActivity.DISPLAY_WITH_BUY;
 
-public class ArticleFragment extends Fragment implements ApiClient.OnResponseListener, ApiClient.OnFailureListener, View.OnClickListener {
+public class ArticleFragment extends Fragment implements ApiClient.OnResponseListener, ApiClient.OnFailureListener, View.OnClickListener, Spinner.OnItemSelectedListener {
 
     private FloatingActionButton fab;
     private Article.Type type;
@@ -92,6 +96,26 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
                 acOne.getArticle(receivedArticleId);
 
                 break;
+
+            case DISPLAY_ADD:
+                fab.setImageResource(R.drawable.ic_tick);
+                getActivity().setTitle(R.string.title_adding_article);
+
+                Spinner spinner = (Spinner) rootView.findViewById(R.id.article_type);
+                TextView hintType = (TextView) rootView.findViewById(R.id.article_hint_type);
+
+                View[] addingViews = new View[]{hintType,spinner};
+                setVisible(addingViews);
+
+                TextInputEditText etCreatedAt = (TextInputEditText) rootView.findViewById(R.id.article_created_at);
+                TextInputEditText etId = (TextInputEditText) rootView.findViewById(R.id.article_id);
+
+                View[] disappearingViews = new View[]{etCreatedAt, etId};
+                setGone(disappearingViews);
+
+                spinner.setOnItemSelectedListener(this);
+
+                break;
         }
 
     }
@@ -142,10 +166,7 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
         currentArticle = (Article) data;
         getActivity().setTitle(currentArticle.getName());
 
-        TextInputEditText etName, etDescription, etPrice, etCondition, etCreatedAt, etId,
-                etExtra1, etExtra2, etExtra3 ;
-
-        TextInputLayout ilExtra1, ilExtra2, ilExtra3;
+        TextInputEditText etName, etDescription, etPrice, etCondition, etCreatedAt, etId;
 
         etName = (TextInputEditText) rootView.findViewById(R.id.article_name);
         etDescription = (TextInputEditText) rootView.findViewById(R.id.article_description);
@@ -162,56 +183,17 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
         String[] basicTexts = new String[]{currentArticle.getDescription(), currentArticle.getPrice(), currentArticle.getCondition(), currentArticle.getCreatedAt(), ""+currentArticle.getId() };
         setText(basicViews, basicTexts);
 
-        TextInputEditText[] extraViews;
-        TextInputLayout[] extraHintsLayouts;
-        String[] hints, extraTexts;
 
         switch (type){
             case BOOK:
                 Book book = (Book) data;
-
-                etExtra1 = (TextInputEditText) rootView.findViewById(R.id.article_extra1);
-                etExtra2 = (TextInputEditText) rootView.findViewById(R.id.article_extra2);
-                etExtra3 = (TextInputEditText) rootView.findViewById(R.id.article_extra3);
-
-                ilExtra1 = (TextInputLayout) rootView.findViewById(R.id.article_hint_extra1);
-                ilExtra2 = (TextInputLayout) rootView.findViewById(R.id.article_hint_extra2);
-                ilExtra3 = (TextInputLayout) rootView.findViewById(R.id.article_hint_extra3);
-
-                extraViews = new TextInputEditText[]{etExtra1, etExtra2, etExtra3};
-                extraHintsLayouts = new TextInputLayout[]{ilExtra1, ilExtra2, ilExtra3};
-
-                setVisible(extraViews);
-                setDisabled(extraViews);
-
-                hints = new String[]{getString(R.string.article_author), getString(R.string.article_publisher), getString(R.string.article_isbn)};
-                setHint(extraHintsLayouts, hints);
-
-                extraTexts = new String[]{book.getAuthor(),book.getPublisher(),book.getISBN()};
-                setText(extraViews,extraTexts);
+                showBookViews(true, book.getAuthor(),book.getPublisher(),book.getISBN());
 
                 break;
 
             case ELECTRONIC_DEVICE:
                 Electronic electronic = (Electronic) data;
-
-                etExtra1 = (TextInputEditText) rootView.findViewById(R.id.article_extra1);
-                etExtra2 = (TextInputEditText) rootView.findViewById(R.id.article_extra2);
-
-                ilExtra1 = (TextInputLayout) rootView.findViewById(R.id.article_hint_extra1);
-                ilExtra2 = (TextInputLayout) rootView.findViewById(R.id.article_hint_extra2);
-
-                extraViews = new TextInputEditText[]{etExtra1, etExtra2};
-                extraHintsLayouts = new TextInputLayout[]{ilExtra1, ilExtra2};
-
-                setVisible(extraViews);
-                setDisabled(extraViews);
-
-                hints = new String[]{getString(R.string.article_producer), getString(R.string.article_model)};
-                setHint(extraHintsLayouts, hints);
-
-                extraTexts = new String[]{electronic.getProducer(), electronic.getModel()};
-                setText(extraViews,extraTexts);
+                showElectronicViews(true, electronic.getProducer(), electronic.getModel());
 
                 break;
         }
@@ -231,6 +213,75 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
         setText(purchaseViews,texts);
     }
 
+    private void showBookViews(Boolean disabled, String... args){
+        TextInputEditText etExtra1, etExtra2, etExtra3;
+        TextInputLayout ilExtra1, ilExtra2, ilExtra3;
+
+        etExtra1 = (TextInputEditText) rootView.findViewById(R.id.article_extra1);
+        etExtra2 = (TextInputEditText) rootView.findViewById(R.id.article_extra2);
+        etExtra3 = (TextInputEditText) rootView.findViewById(R.id.article_extra3);
+
+        ilExtra1 = (TextInputLayout) rootView.findViewById(R.id.article_hint_extra1);
+        ilExtra2 = (TextInputLayout) rootView.findViewById(R.id.article_hint_extra2);
+        ilExtra3 = (TextInputLayout) rootView.findViewById(R.id.article_hint_extra3);
+
+        TextInputEditText[] extraViews = new TextInputEditText[]{etExtra1, etExtra2, etExtra3};
+        TextInputLayout[] extraHintsLayouts = new TextInputLayout[]{ilExtra1, ilExtra2, ilExtra3};
+
+        setVisible(extraViews);
+
+        if(disabled) {
+            setDisabled(extraViews);
+        }
+
+        String[] hints = new String[]{getString(R.string.article_author), getString(R.string.article_publisher), getString(R.string.article_isbn)};
+        setHint(extraHintsLayouts, hints);
+
+        if(args.length == 3) {
+            setText(extraViews, args);
+        }
+
+    }
+
+    private void showElectronicViews(Boolean disabled, String... args){
+        TextInputEditText etExtra1, etExtra2;
+        TextInputLayout ilExtra1, ilExtra2;
+
+        etExtra1 = (TextInputEditText) rootView.findViewById(R.id.article_extra1);
+        etExtra2 = (TextInputEditText) rootView.findViewById(R.id.article_extra2);
+
+        ilExtra1 = (TextInputLayout) rootView.findViewById(R.id.article_hint_extra1);
+        ilExtra2 = (TextInputLayout) rootView.findViewById(R.id.article_hint_extra2);
+
+        TextInputEditText[] extraViews = new TextInputEditText[]{etExtra1, etExtra2};
+        TextInputLayout[] extraHintsLayouts = new TextInputLayout[]{ilExtra1, ilExtra2};
+
+        setVisible(extraViews);
+
+        if(disabled){
+            setDisabled(extraViews);
+        }
+
+        String[] hints = new String[]{getString(R.string.article_producer), getString(R.string.article_model)};
+        setHint(extraHintsLayouts, hints);
+
+        if(args.length == 2) {
+            setText(extraViews, args);
+        }
+    }
+
+    private void disappearExtraViews(){
+        TextInputEditText etExtra1, etExtra2, etExtra3;
+
+        etExtra1 = (TextInputEditText) rootView.findViewById(R.id.article_extra1);
+        etExtra2 = (TextInputEditText) rootView.findViewById(R.id.article_extra2);
+        etExtra3 = (TextInputEditText) rootView.findViewById(R.id.article_extra3);
+
+        TextInputEditText[] extraViews = new TextInputEditText[]{etExtra1, etExtra2, etExtra3};
+
+        setGone(extraViews);
+    }
+
     private void setDisabled(View[] views){
         for(View v: views){
             v.setEnabled(false);
@@ -240,6 +291,12 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
     private void setVisible(View[] views){
         for(View v: views){
             v.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void setGone(View[] views){
+        for(View v: views){
+            v.setVisibility(View.GONE);
         }
     }
 
@@ -287,6 +344,37 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
             Toast.makeText(getContext(),getString(R.string.msg_login_first),Toast.LENGTH_SHORT).show();
             startActivity(new Intent(getContext(),LoginActivity.class));
         }
+
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        switch (position){
+            case 0:
+                type = Article.Type.BOOK;
+                showBookViews(false);
+                break;
+
+            case 1:
+                type = Article.Type.ELECTRONIC_DEVICE;
+                disappearExtraViews();
+                showElectronicViews(false);
+                break;
+
+            case 2:
+                type = Article.Type.OFFICE_SUPPLY;
+                disappearExtraViews();
+                break;
+
+            case 3:
+                type = Article.Type.OTHER;
+                disappearExtraViews();
+                break;
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
 
     }
 }

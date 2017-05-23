@@ -23,6 +23,38 @@
     android:id="@+id/article_base_layout"
     >
 
+    <!-- Following adding fields -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+
+        android:padding="4dp"
+        >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+
+            android:text="@string/article_hint_type"
+            android:id="@+id/article_hint_type"
+            android:visibility="gone"
+            />
+
+        <Spinner
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="8"
+
+            android:id="@+id/article_type"
+            android:entries="@array/article_type"
+            android:visibility="gone"
+            />
+
+    </LinearLayout>
+
     <!-- Following purchase fields -->
 
     <LinearLayout

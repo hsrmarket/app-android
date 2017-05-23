@@ -35,6 +35,7 @@
     <string name="title_articles">My Articles</string>
     <string name="title_sales">My Sales</string>
     <string name="title_purchases">My Purchases</string>
+    <string name="title_adding_article">Adding new Article</string>
 
 
     <string name="article_name">Name</string>
@@ -56,6 +57,14 @@
 
     <string name="status_open">Pending</string>
     <string name="status_done">Completed</string>
+
+    <string name="article_hint_type">Type</string>
+    <array name="article_type">
+        <item>Book</item>
+        <item>Electronic Device</item>
+        <item>Office Supply</item>
+        <item>Other</item>
+    </array>
 
     <string name="login_send">Login</string>
     <string name="login_register">Register</string>

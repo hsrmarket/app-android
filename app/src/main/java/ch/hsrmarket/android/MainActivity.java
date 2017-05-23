@@ -151,6 +151,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 myIntent.putExtra(getString(R.string.appointed_mylist),R.id.nav_purchases);
                 startActivity(myIntent);
                 break;
+
+            case R.id.nav_add_article:
+                Intent addArticleIntent = new Intent(getApplicationContext(),ArticleActivity.class);
+                addArticleIntent.putExtra(getString(R.string.article_display_mode),ArticleActivity.DISPLAY_ADD);
+
+                startActivity(addArticleIntent);
+
+                break;
         }
 
         drawer.closeDrawer(GravityCompat.START);
