@@ -17,6 +17,8 @@
     <string name="tag_sales">sales</string>
     <string name="tag_purchases">purchases</string>
 
+    <string name="account_display_mode">displayMode</string>
+
     <!-- For normal purpose -->
     <string name="app_name">HSRmarket</string>
     <string name="app_url">web.hsrmarket.ch:3000</string>
@@ -103,5 +105,6 @@
     <string name="menu_add_article">Add Article</string>
     <string name="menu_logout">Logout</string>
     <string name="menu_login">Login</string>
+
 
 </resources>

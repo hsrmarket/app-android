@@ -31,9 +31,9 @@ public class ArticleActivity extends AppCompatActivity{
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
         Bundle bundle = getIntent().getExtras();
-        int chosenDisplay = bundle.getInt(getString(R.string.article_display_mode),-1);
+        int displayMode = bundle.getInt(getString(R.string.article_display_mode),-1);
 
-        switch (chosenDisplay){
+        switch (displayMode){
             case DISPLAY_PURCHASE:
             case DISPLAY_ONLY:
             case DISPLAY_WITH_BUY:
@@ -50,7 +50,7 @@ public class ArticleActivity extends AppCompatActivity{
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-        if(chosenDisplay != DISPLAY_PURCHASE) {
+        if(displayMode != DISPLAY_PURCHASE) {
             tabLayout.setVisibility(View.GONE);
         }
     }
