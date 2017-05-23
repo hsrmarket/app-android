@@ -18,7 +18,6 @@ public class ArticleActivity extends AppCompatActivity{
     public static final int DISPLAY_PURCHASE = 34;
     public static final int DISPLAY_ADD = 55;
 
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article);
@@ -32,9 +31,25 @@ public class ArticleActivity extends AppCompatActivity{
 
         Bundle bundle = getIntent().getExtras();
         int displayMode = bundle.getInt(getString(R.string.article_display_mode),-1);
+        int accountId = bundle.getInt(getString(R.string.pass_account_id),-1);
 
         switch (displayMode){
             case DISPLAY_PURCHASE:
+                ArticleFragment articleFragment = new ArticleFragment();
+                articleFragment.setArguments(bundle);
+                adapter.addFragment(articleFragment,getString(R.string.tab_article));
+
+                AccountFragment accountFragment = new AccountFragment();
+
+                Bundle args = new Bundle();
+                args.putInt(getString(R.string.account_display_mode),AccountFragment.DISPLAY_ONLY);
+                args.putInt(getString(R.string.pass_account_id),accountId);
+
+                accountFragment.setArguments(args);
+                adapter.addFragment(accountFragment,getString(R.string.tab_seller));
+
+                break;
+
             case DISPLAY_ONLY:
             case DISPLAY_WITH_BUY:
             case DISPLAY_ADD:

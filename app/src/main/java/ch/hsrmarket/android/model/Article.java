@@ -61,6 +61,8 @@ public class Article {
     private int createdby;
 
     private int purchaseId;
+    private int sellerId;
+    private int buyerId;
 
     public Article(int id, String name, double price, int condition, String description, String createdAt, String imagePath, Type type) {
         this.id = id;
@@ -164,6 +166,22 @@ public class Article {
 
     public int getPurchaseId(){
        return purchaseId;
+    }
+
+    public int getSellerId() {
+        return sellerId;
+    }
+
+    public void setSellerId(int sellerId) {
+        this.sellerId = sellerId;
+    }
+
+    public int getBuyerId() {
+        return buyerId;
+    }
+
+    public void setBuyerId(int buyerId) {
+        this.buyerId = buyerId;
     }
 
     public void setCreatedBy(int createdby){

@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import ch.hsrmarket.android.api.ApiClient;
@@ -27,6 +28,9 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
     public static final int DISPLAY_EMPTY = 3;
     public static final int DISPLAY_ONLY = 5;
     public static final int DISPLAY_EDITABLE = 8;
+
+    public static final int POST_ACCOUNT = 13;
+    public static final int GET_ACCOUNT = 21;
 
     private int displayMode;
 
@@ -53,6 +57,22 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
 
         Bundle bundle = getArguments();
         displayMode = bundle.getInt(getString(R.string.account_display_mode),-1);
+        int accountId = bundle.getInt(getString(R.string.pass_account_id),-1);
+
+        switch (displayMode){
+            case DISPLAY_ONLY:
+
+                View[] disappearingViews = new View[]{etPassword, etPasswordConfirm, btnSend};
+                setGone(disappearingViews);
+
+                View[] usefulViews = new View[]{etStudentId,etFirstName,etLastName,etStreet,etStreetNo,etZip,etCity,etPhone,etEmail};
+                setDisabled(usefulViews);
+
+                ApiClient apiClient = new ApiClient(getContext(),GET_ACCOUNT,this,this);
+                apiClient.getAccount(accountId);
+
+                break;
+        }
 
         return rootView;
     }
@@ -65,7 +85,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
                 EditText[] others = new EditText[]{etStudentId,etFirstName,etLastName,etStreet,etStreetNo,etZip,etCity,etPhone,etEmail,etPassword};
 
                 if(!isEmpty(others) && isValidEmail(etEmail) && isPasswordOK(etPassword,etPasswordConfirm)){
-                    ApiClient apiClient = new ApiClient(getContext(),0,this,this);
+                    ApiClient apiClient = new ApiClient(getContext(),POST_ACCOUNT,this,this);
 
                     String hash = LoginActivity.getHash(getString(etPassword));
                     Account account = new Account(getInt(etStudentId),getString(etFirstName),getString(etLastName),getAddress(etStreet,etStreetNo,etZip,etCity), getString(etPhone), getString(etEmail), hash);
@@ -74,6 +94,24 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
                 }
 
                 break;
+        }
+    }
+
+    private void setDisabled(View[] views){
+        for(View v: views){
+            v.setEnabled(false);
+        }
+    }
+
+    private void setGone(View[] views){
+        for(View v: views){
+            v.setVisibility(View.GONE);
+        }
+    }
+
+    private void setText(TextInputEditText[] views, String[] texts){
+        for(int i = 0; i < views.length; i++){
+            views[i].setText(texts[i]);
         }
     }
 
@@ -133,13 +171,27 @@ public class AccountFragment extends Fragment implements View.OnClickListener, A
     @Override
     public void onDataLoaded(Object data, int requestCode) {
         Account account = (Account) data;
-        SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.pref_credentials), Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
 
-        editor.putString(getString(R.string.secret_account), account.getJsonObject());
-        editor.commit();
+        switch (requestCode) {
+            case POST_ACCOUNT:
+                SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.pref_credentials), Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
 
-        getActivity().finish();
+                editor.putString(getString(R.string.secret_account), account.getJsonObject());
+                editor.commit();
+
+                getActivity().finish();
+                break;
+
+            case GET_ACCOUNT:
+                TextInputEditText[] editTexts = new TextInputEditText[]{etStudentId, etFirstName, etLastName, etStreet, etStreetNo, etZip, etCity, etPhone, etEmail};
+                Address address = account.getAddress();
+                String[] texts = new String[]{""+account.getStudentId(), account.getFirstName(), account.getLastName(), address.getStreet(), address.getStreetNo(), ""+address.getZip(), address.getCity(), account.getPhone(), account.getEmail()};
+
+                setText(editTexts,texts);
+
+                break;
+        }
     }
 
     @Override

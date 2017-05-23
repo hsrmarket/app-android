@@ -169,7 +169,11 @@ public class ApiClient implements OnJsonReady, OnInternetReady {
 
         for(Purchase p : purchases){
             Article a = p.getArticle();
+
             a.setPurchaseId(p.getId());
+            a.setSellerId(p.getSeller().getId());
+            a.setBuyerId(p.getBuyer().getId());
+
             articles.add(a);
         }
 

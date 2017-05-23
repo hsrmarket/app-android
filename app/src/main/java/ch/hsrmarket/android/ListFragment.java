@@ -24,6 +24,7 @@ public class ListFragment extends Fragment implements ApiClient.OnResponseListen
     private int appointedMyList;
     private int accountId;
     private int requestOrigin;
+    private List<Article> items;
 
     public static final int ORIGIN_CATEGORY = 5;
     public static final int ORIGIN_MY_ARTICLES = 7;
@@ -35,7 +36,7 @@ public class ListFragment extends Fragment implements ApiClient.OnResponseListen
         Bundle bundle = getArguments();
         appointedCategory = (Article.Type) bundle.getSerializable(getString(R.string.appointed_category));
         appointedMyList = bundle.getInt(getString(R.string.appointed_mylist),-1);
-        accountId = bundle.getInt(getString(R.string.account_pass_id),-1);
+        accountId = bundle.getInt(getString(R.string.mylist_account_id),-1);
         requestOrigin = bundle.getInt(getString(R.string.request_origin),-1);
 
         recyclerView = (RecyclerView) root.findViewById(R.id.recycler_view);
@@ -68,7 +69,7 @@ public class ListFragment extends Fragment implements ApiClient.OnResponseListen
 
     @Override
     public void onDataLoaded(Object data, int requestCode) {
-        List<Article> items = (List<Article>) data;
+        items = (List<Article>) data;
 
         if(items.isEmpty()){
             EmptyAdapter adapter = new EmptyAdapter(getString(R.string.msg_listview_empty),R.drawable.ic_empty);
@@ -88,14 +89,12 @@ public class ListFragment extends Fragment implements ApiClient.OnResponseListen
 
     @Override
     public void onClick(View view, int position) {
-        Integer id = (Integer) view.getTag(R.integer.article_id);
-        Article.Type type = (Article.Type) view.getTag(R.integer.article_type);
-        Integer purchaseId = (Integer) view.getTag(R.integer.article_purchase_id);
+        Article article = items.get(position);
 
         Intent intent = new Intent(getContext(),ArticleActivity.class);
-        intent.putExtra(getString(R.string.article_pass_id),id);
-        intent.putExtra(getString(R.string.article_pass_type),type);
-        intent.putExtra(getString(R.string.article_pass_purchase_id),purchaseId);
+        intent.putExtra(getString(R.string.article_pass_id),article.getId());
+        intent.putExtra(getString(R.string.article_pass_type),article.getType());
+        intent.putExtra(getString(R.string.article_pass_purchase_id),article.getPurchaseId());
 
         switch (requestOrigin){
             case ORIGIN_CATEGORY:
@@ -105,6 +104,7 @@ public class ListFragment extends Fragment implements ApiClient.OnResponseListen
                 intent.putExtra(getString(R.string.article_display_mode),ArticleActivity.DISPLAY_ONLY);
                 break;
             case ORIGIN_PURCHASES_SALES:
+                intent.putExtra(getString(R.string.pass_account_id),article.getSellerId());
                 intent.putExtra(getString(R.string.article_display_mode),ArticleActivity.DISPLAY_PURCHASE);
                 break;
         }

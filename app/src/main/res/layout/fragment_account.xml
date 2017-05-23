@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="ch.hsrmarket.android.RegisterActivity"
-    tools:showIn="@layout/activity_register"
     >
 
     <LinearLayout
@@ -26,6 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
+                android:textColor="@android:color/black"
                 android:id="@+id/register_student_id"
                 android:inputType="number"
                 />
@@ -42,6 +39,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
+                android:textColor="@android:color/black"
                 android:id="@+id/register_first_name"
                 android:inputType="text"
                 />
@@ -58,6 +56,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
+                android:textColor="@android:color/black"
                 android:id="@+id/register_last_name"
                 android:inputType="text"
                 />
@@ -65,6 +64,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <LinearLayout
+            android:baselineAligned="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -82,6 +82,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
 
+                    android:textColor="@android:color/black"
                     android:id="@+id/register_street"
                     android:inputType="text"
                     android:nextFocusDown="@+id/register_street_no"
@@ -101,6 +102,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
 
+                    android:textColor="@android:color/black"
                     android:id="@+id/register_street_no"
                     android:inputType="text"
                     android:nextFocusDown="@+id/register_zip"
@@ -111,6 +113,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:baselineAligned="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -128,6 +131,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
 
+                    android:textColor="@android:color/black"
                     android:id="@+id/register_zip"
                     android:inputType="number"
                     android:nextFocusDown="@+id/register_city"
@@ -147,6 +151,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
 
+                    android:textColor="@android:color/black"
                     android:id="@+id/register_city"
                     android:inputType="text"
                     />
@@ -165,6 +170,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
+                android:textColor="@android:color/black"
                 android:id="@+id/register_phone"
                 android:inputType="phone"
                 />
@@ -181,6 +187,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
+                android:textColor="@android:color/black"
                 android:id="@+id/register_email"
                 android:inputType="textEmailAddress"
                 />
@@ -197,6 +204,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
+                android:textColor="@android:color/black"
                 android:id="@+id/register_password"
                 android:inputType="textPassword"
                 />
@@ -213,6 +221,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
+                android:textColor="@android:color/black"
                 android:id="@+id/register_password_confirm"
                 android:inputType="textPassword"
                 />
@@ -229,4 +238,4 @@
 
     </LinearLayout>
 
-</ScrollView>
+</android.support.v4.widget.NestedScrollView>

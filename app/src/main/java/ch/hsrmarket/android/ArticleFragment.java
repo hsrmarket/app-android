@@ -174,8 +174,6 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
                 break;
         }
 
-        LinearLayout linearLayout = (LinearLayout) rootView.findViewById(R.id.article_base_layout);
-        linearLayout.requestFocus();
     }
 
     @Override
