@@ -34,49 +34,51 @@ public class ArticleActivityElectronicTest {
     public ActivityTestRule<ArticleActivity> mActivityRule = new ActivityTestRule<ArticleActivity>(ArticleActivity.class){
         @Override
         protected Intent getActivityIntent() {
-            Context targetContext = InstrumentationRegistry.getInstrumentation()
-                    .getTargetContext();
-            Intent result = new Intent(targetContext, ArticleActivity.class);
-            result.putExtra("requestedId", 182);
-            result.putExtra("requestedType", Article.Type.ELECTRONIC_DEVICE);
-            return result;
+            Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+
+            Intent intent = new Intent(targetContext, ArticleActivity.class);
+            intent.putExtra("requestedId",60);
+            intent.putExtra("requestedType",Article.Type.ELECTRONIC_DEVICE);
+            intent.putExtra("displayMode",ArticleActivity.DISPLAY_WITH_BUY);
+
+            return intent;
         }
     };
 
     @Test
     public void TitleCheck(){
         onView(allOf(instanceOf(TextView.class), withParent(withId(R.id.toolbar))))
-                .check(matches(withText("ROG Notebook")));
+                .check(matches(withText("object-oriented")));
     }
 
     @Test
     public void DescriptionCheck(){
         onView(withId(R.id.article_description))
-                .check(matches(withText("[For Android Test - do not delete it] a great laptop")));
+                .check(matches(withText("Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.")));
     }
 
     @Test
     public void PriceCheck(){
         onView(withId(R.id.article_price))
-                .check(matches(withText("999.00")));
+                .check(matches(withText("18.70")));
     }
 
     @Test
     public void ConditionCheck(){
         onView(withId(R.id.article_condition))
-                .check(matches(withText("3")));
+                .check(matches(withText("\uD83D\uDD25\uD83D\uDD25\uD83D\uDD25\uD83D\uDD25")));
     }
 
     @Test
     public void CreatedAtCheck(){
         onView(withId(R.id.article_created_at))
-                .check(matches(withText("2017-04-23")));
+                .check(matches(withText("2016-10-21")));
     }
 
     @Test
     public void IdCheck(){
         onView(withId(R.id.article_id))
-                .check(matches(withText("182")));
+                .check(matches(withText("60")));
     }
 
     // Extra Fields with hint checks
@@ -84,13 +86,13 @@ public class ArticleActivityElectronicTest {
     @Test
     public void Extra1Check(){
         onView(withId(R.id.article_extra1))
-                .check(matches(withText("Asus Tek")));
+                .check(matches(withText("Yacero")));
     }
 
     @Test
     public void Extra2Check(){
         onView(withId(R.id.article_extra2))
-                .check(matches(withText("G77w")));
+                .check(matches(withText("S85171D")));
     }
 
     @Test

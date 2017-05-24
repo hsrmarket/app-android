@@ -19,14 +19,13 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static ch.hsrmarket.android.InstrumentedTest.hasTextInputLayoutHintText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.IsNot.not;
 
 
 @RunWith(AndroidJUnit4.class)
-public class ArticleActivityOfficeTest {
+public class ArticleActivityOtherTest {
 
     @Rule
     public ActivityTestRule<ArticleActivity> mActivityRule = new ActivityTestRule<ArticleActivity>(ArticleActivity.class){
@@ -35,8 +34,8 @@ public class ArticleActivityOfficeTest {
             Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
             Intent intent = new Intent(targetContext, ArticleActivity.class);
-            intent.putExtra("requestedId",121);
-            intent.putExtra("requestedType",Article.Type.OFFICE_SUPPLY);
+            intent.putExtra("requestedId",165);
+            intent.putExtra("requestedType",Article.Type.OTHER);
             intent.putExtra("displayMode",ArticleActivity.DISPLAY_WITH_BUY);
 
             return intent;
@@ -46,37 +45,37 @@ public class ArticleActivityOfficeTest {
     @Test
     public void TitleCheck(){
         onView(allOf(instanceOf(TextView.class), withParent(withId(R.id.toolbar))))
-                .check(matches(withText("Automated")));
+                .check(matches(withText("instruction set")));
     }
 
     @Test
     public void DescriptionCheck(){
         onView(withId(R.id.article_description))
-                .check(matches(withText("Fusce posuere felis sed lacus. Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl. Nunc rhoncus dui vel sem.")));
+                .check(matches(withText("Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.")));
     }
 
     @Test
     public void PriceCheck(){
         onView(withId(R.id.article_price))
-                .check(matches(withText("81.97")));
+                .check(matches(withText("33.84")));
     }
 
     @Test
     public void ConditionCheck(){
         onView(withId(R.id.article_condition))
-                .check(matches(withText("\uD83D\uDD25\uD83D\uDD25")));
+                .check(matches(withText("\uD83D\uDD25\uD83D\uDD25\uD83D\uDD25")));
     }
 
     @Test
     public void CreatedAtCheck(){
         onView(withId(R.id.article_created_at))
-                .check(matches(withText("2017-05-14")));
+                .check(matches(withText("2016-07-22")));
     }
 
     @Test
     public void IdCheck(){
         onView(withId(R.id.article_id))
-                .check(matches(withText("121")));
+                .check(matches(withText("165")));
     }
 
     // Extra Fields with hint checks

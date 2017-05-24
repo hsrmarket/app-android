@@ -10,6 +10,9 @@
     <string name="article_pass_purchase_id">requestedPurchase</string>
     <string name="article_display_mode">displayMode</string>
 
+    <string name="pref_url">urlData</string>
+    <string name="secrel_url">secretURL</string>
+
     <string name="pref_credentials">accountData</string>
     <string name="secret_account">accountJson</string>
 
