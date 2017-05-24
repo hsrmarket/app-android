@@ -88,7 +88,7 @@ public class MainDrawerMenuLoggedInTest {
     }
 
     @Test
-    public void MyArticlesIntentCheck() throws InterruptedException {
+    public void MyArticlesIntentCheck() {
         onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
 
         onView(withId(R.id.nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_articles));
@@ -100,7 +100,7 @@ public class MainDrawerMenuLoggedInTest {
     }
 
     @Test
-    public void MySalesIntentCheck() throws InterruptedException {
+    public void MySalesIntentCheck() {
         onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
 
         onView(withId(R.id.nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_sales));
@@ -112,7 +112,7 @@ public class MainDrawerMenuLoggedInTest {
     }
 
     @Test
-    public void MyPurchasesIntentCheck() throws InterruptedException {
+    public void MyPurchasesIntentCheck() {
         onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
 
         onView(withId(R.id.nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_purchases));
@@ -124,7 +124,7 @@ public class MainDrawerMenuLoggedInTest {
     }
 
     @Test
-    public void AddArticleIntentCheck() throws InterruptedException {
+    public void AddArticleIntentCheck() {
         onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
 
         onView(withId(R.id.nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_add_article));
@@ -136,7 +136,7 @@ public class MainDrawerMenuLoggedInTest {
     }
 
     @Test
-    public void LogoutCheck() throws InterruptedException {
+    public void LogoutCheck() {
         onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
 
         onView(withId(R.id.nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_logout));

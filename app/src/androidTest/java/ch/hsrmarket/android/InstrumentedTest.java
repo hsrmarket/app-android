@@ -16,15 +16,15 @@ import org.junit.runners.Suite;
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 
 /*  ARTICLES (use one article only for one test suite)
- *  11, 60, 121, 165
+ *  11, 29, 60, 121, 165
  *
  * ACCOUNTS
  *  4, 6
  */
 
 @RunWith(Suite.class)
-//@Suite.SuiteClasses({ShowArticleBookTest.class , ShowArticleElectronicTest.class, ShowArticleOfficeTest.class, ShowArticleOtherTest.class, LoginTest.class, MainDrawerMenuLoggedOutTest.class})
-@Suite.SuiteClasses({MainDrawerMenuLoggedInTest.class})
+//@Suite.SuiteClasses({ShowArticleBookTest.class , ShowArticleElectronicTest.class, ShowArticleOfficeTest.class, ShowArticleOtherTest.class, LoginTest.class, MainDrawerMenuLoggedOutTest.class, MainDrawerMenuLoggedInTest.class, BuyArticleTest.class, MyListDrawerMenuTest.class})
+@Suite.SuiteClasses({})
 
 public class InstrumentedTest {
 
