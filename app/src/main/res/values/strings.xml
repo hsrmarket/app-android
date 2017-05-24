@@ -35,6 +35,7 @@
     <string name="title_articles">My Articles</string>
     <string name="title_sales">My Sales</string>
     <string name="title_purchases">My Purchases</string>
+    <string name="title_adding_article">Adding new Article</string>
 
 
     <string name="article_name">Name</string>
@@ -57,6 +58,14 @@
     <string name="status_open">Pending</string>
     <string name="status_done">Completed</string>
 
+    <string name="article_hint_type">Type</string>
+    <array name="article_type">
+        <item>Book</item>
+        <item>Electronic Device</item>
+        <item>Office Supply</item>
+        <item>Other</item>
+    </array>
+
     <string name="login_send">Login</string>
     <string name="login_register">Register</string>
 
@@ -73,6 +82,7 @@
     <string name="register_phone">Phone No.</string>
 
     <string name="msg_successful_purchased">Your purchase is successful.</string>
+    <string name="msg_successful_new_article">Your new article was successfully added.</string>
     <string name="msg_no_internet">There is no Internet connection available. Please check your Internet connection.</string>
     <string name="msg_listview_empty">No articles available.</string>
     <string name="msg_fail_login">Your email or password is invalid. Please try again.</string>

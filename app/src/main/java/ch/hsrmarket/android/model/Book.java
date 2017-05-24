@@ -20,6 +20,13 @@ public class Book extends Article {
         this.publisher = publisher;
     }
 
+    public Book(String name, double price, int condition, String description, String ISBN, String author, String publisher) {
+        super(name, price, condition, description, Type.BOOK);
+        this.ISBN = ISBN;
+        this.author = author;
+        this.publisher = publisher;
+    }
+
     public String getISBN() {
         return ISBN;
     }

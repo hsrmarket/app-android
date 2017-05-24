@@ -168,6 +168,13 @@ public class MyListActivity extends AppCompatActivity implements NavigationView.
                 setFragment(R.id.nav_purchases);
                 retVal = true;
                 break;
+
+            case R.id.nav_add_article:
+                Intent addArticleIntent = new Intent(getApplicationContext(),ArticleActivity.class);
+                addArticleIntent.putExtra(getString(R.string.article_display_mode),ArticleActivity.DISPLAY_ADD);
+
+                startActivity(addArticleIntent);
+                break;
         }
 
         drawer.closeDrawer(GravityCompat.START);
