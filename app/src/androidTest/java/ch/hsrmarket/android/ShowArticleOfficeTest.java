@@ -26,7 +26,7 @@ import static org.hamcrest.core.IsNot.not;
 
 
 @RunWith(AndroidJUnit4.class)
-public class ArticleActivityOfficeTest {
+public class ShowArticleOfficeTest {
 
     @Rule
     public ActivityTestRule<ArticleActivity> mActivityRule = new ActivityTestRule<ArticleActivity>(ArticleActivity.class){

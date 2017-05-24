@@ -15,15 +15,18 @@ import org.junit.runners.Suite;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 
+/*  ARTICLES (use one article only for one test suite)
+ *  11, 60, 121, 165
+ *
+ * ACCOUNTS
+ *  4, 6
+ */
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ArticleActivityBookTest.class , ArticleActivityElectronicTest.class, ArticleActivityOfficeTest.class, ArticleActivityOtherTest.class})
-public class InstrumentedTest {
+//@Suite.SuiteClasses({ShowArticleBookTest.class , ShowArticleElectronicTest.class, ShowArticleOfficeTest.class, ShowArticleOtherTest.class, LoginTest.class, MainDrawerMenuLoggedOutTest.class})
+@Suite.SuiteClasses({MainDrawerMenuLoggedInTest.class})
 
-    //TODO
-    // * a CategoryFragmentTest
-    // * missing Buy a ArticleTest
-    // * without internet test
+public class InstrumentedTest {
 
     @BeforeClass
     public static void setUrl(){

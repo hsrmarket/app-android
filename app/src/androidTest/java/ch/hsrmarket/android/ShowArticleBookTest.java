@@ -32,7 +32,7 @@ import static org.hamcrest.Matchers.instanceOf;
 
 
 @RunWith(AndroidJUnit4.class)
-public class ArticleActivityBookTest {
+public class ShowArticleBookTest {
 
     @Rule
     public ActivityTestRule<ArticleActivity> mActivityRule = new ActivityTestRule<ArticleActivity>(ArticleActivity.class){
