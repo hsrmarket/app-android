@@ -43,7 +43,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.login_send:
                 ApiClient apiClient = new ApiClient(getApplicationContext(),0,this,this);
                 String hash = getHash(etPassword.getText().toString());
-                apiClient.checkCredentials(etEmail.getText().toString(), hash);
+                apiClient.postLogin(etEmail.getText().toString(), hash);
 
                 break;
 

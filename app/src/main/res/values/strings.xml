@@ -7,6 +7,7 @@
 
     <string name="article_pass_id">requestedId</string>
     <string name="article_pass_type">requestedType</string>
+    <string name="article_pass_purchase_id">requestedPurchase</string>
     <string name="article_display_mode">displayMode</string>
 
     <string name="pref_credentials">accountData</string>
@@ -24,6 +25,7 @@
     <string name="tab_electronic_devices">Electronic Devices</string>
     <string name="tab_office_supplies">Office Supplies</string>
     <string name="tab_others">Others</string>
+    <string name="tab_article">Article</string>
 
     <string name="description_empty_sign">The List is empty.</string>
     <string name="title_activity_article">Article</string>
@@ -49,17 +51,23 @@
     <string name="article_producer">Manufacturer</string>
     <string name="article_model">Model No.</string>
 
+    <string name="article_purchase_date">Purchase Date</string>
+    <string name="article_status">Status</string>
+
+    <string name="status_open">Pending</string>
+    <string name="status_done">Completed</string>
+
     <string name="login_send">Login</string>
     <string name="login_register">Register</string>
 
     <string name="register_email">Email</string>
     <string name="register_password">Password</string>
-    <string name="register_passwordConfirm">Confirm Password</string>
-    <string name="register_studentId">Student Id</string>
-    <string name="register_firstName">First Name</string>
-    <string name="register_lastName">Surname</string>
+    <string name="register_password_confirm">Confirm Password</string>
+    <string name="register_student_id">Student Id</string>
+    <string name="register_first_name">First Name</string>
+    <string name="register_last_name">Surname</string>
     <string name="register_street">Street</string>
-    <string name="register_streetNo">No.</string>
+    <string name="register_street_no">No.</string>
     <string name="register_city">City</string>
     <string name="register_zip">ZIP Code</string>
     <string name="register_phone">Phone No.</string>
@@ -85,4 +93,5 @@
     <string name="menu_add_article">Add Article</string>
     <string name="menu_logout">Logout</string>
     <string name="menu_login">Login</string>
+
 </resources>

@@ -13,16 +13,20 @@ public class Purchase {
     @SerializedName("buyer")
     private Account buyer;
 
+    @SerializedName("seller")
+    private Account seller;
+
     @SerializedName("purchaseDate")
     private String date;
 
     @SerializedName("completed")
     private boolean completed;
 
-    public Purchase(int id, Article article, Account buyer, String date, boolean completed) {
+    public Purchase(int id, Article article, Account buyer, Account seller, String date, boolean completed) {
         this.id = id;
         this.article = article;
         this.buyer = buyer;
+        this.seller = seller;
         this.date = date;
         this.completed = completed;
     }

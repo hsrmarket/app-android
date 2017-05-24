@@ -32,18 +32,18 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         Button btnSend = (Button) findViewById(R.id.register_send);
         btnSend.setOnClickListener(this);
 
-        etStudentId = (TextInputEditText) findViewById(R.id.register_studentId);
-        etFirstName = (TextInputEditText) findViewById(R.id.register_firstName);
-        etLastName = (TextInputEditText) findViewById(R.id.register_lastName);
+        etStudentId = (TextInputEditText) findViewById(R.id.register_student_id);
+        etFirstName = (TextInputEditText) findViewById(R.id.register_first_name);
+        etLastName = (TextInputEditText) findViewById(R.id.register_last_name);
         etStreet = (TextInputEditText) findViewById(R.id.register_street);
-        etStreetNo = (TextInputEditText) findViewById(R.id.register_streetNo);
+        etStreetNo = (TextInputEditText) findViewById(R.id.register_street_no);
 
         etZip = (TextInputEditText) findViewById(R.id.register_zip);
         etCity = (TextInputEditText) findViewById(R.id.register_city);
         etPhone = (TextInputEditText) findViewById(R.id.register_phone);
         etEmail = (TextInputEditText) findViewById(R.id.register_email);
         etPassword = (TextInputEditText) findViewById(R.id.register_password);
-        etPasswordConfirm = (TextInputEditText) findViewById(R.id.register_passwordConfirm);
+        etPasswordConfirm = (TextInputEditText) findViewById(R.id.register_password_confirm);
 
     }
 
@@ -60,7 +60,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     String hash = LoginActivity.getHash(getString(etPassword));
                     Account account = new Account(getInt(etStudentId),getString(etFirstName),getString(etLastName),getAddress(etStreet,etStreetNo,etZip,etCity), getString(etPhone), getString(etEmail), hash);
 
-                    apiClient.createPerson(account);
+                    apiClient.postAccount(account);
                 }
 
                 break;

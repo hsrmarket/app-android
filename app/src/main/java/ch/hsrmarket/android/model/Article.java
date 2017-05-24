@@ -36,6 +36,8 @@ public class Article {
     @SerializedName("type")
     private Type type;
 
+    private int purchaseId;
+
     public Article(int id, String name, double price, int condition, String description, String createdAt, String imagePath, Type type) {
         this.id = id;
         this.name = name;
@@ -67,8 +69,14 @@ public class Article {
         this.price = price;
     }
 
-    public int getCondition() {
-        return condition;
+    public String getCondition() {
+        String retVal = "";
+
+        for(int i = 0 ; i < condition; i++){
+            retVal += "\uD83D\uDD25";
+        }
+
+        return retVal;
     }
 
     public void setCondition(int condition) {
@@ -109,6 +117,14 @@ public class Article {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public void setPurchaseId(int purchaseId){
+        this.purchaseId = purchaseId;
+    }
+
+    public int getPurchaseId(){
+       return purchaseId;
     }
 
     @Override
