@@ -31,6 +31,7 @@ import ch.hsrmarket.android.model.Purchase;
 import static ch.hsrmarket.android.ArticleActivity.DISPLAY_ADD;
 import static ch.hsrmarket.android.ArticleActivity.DISPLAY_ONLY;
 import static ch.hsrmarket.android.ArticleActivity.DISPLAY_PURCHASE;
+import static ch.hsrmarket.android.ArticleActivity.DISPLAY_SALE;
 import static ch.hsrmarket.android.ArticleActivity.DISPLAY_WITH_BUY;
 
 public class ArticleFragment extends Fragment implements ApiClient.OnResponseListener, ApiClient.OnFailureListener, View.OnClickListener, Spinner.OnItemSelectedListener {
@@ -44,7 +45,7 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
 
     private int receivedArticleId;
     private int receivedPurchaseId;
-    private int chosenDisplay;
+    private int displayMode;
 
     private View rootView;
 
@@ -67,7 +68,7 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
         type = (Article.Type) bundle.getSerializable(getString(R.string.article_pass_type));
         receivedPurchaseId = bundle.getInt(getString(R.string.article_pass_purchase_id),-1);
 
-        chosenDisplay = bundle.getInt(getString(R.string.article_display_mode),-1);
+        displayMode = bundle.getInt(getString(R.string.article_display_mode),-1);
 
         etName = (TextInputEditText) rootView.findViewById(R.id.article_name);
         etDescription = (TextInputEditText) rootView.findViewById(R.id.article_description);
@@ -88,7 +89,17 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
         super.onStart();
         ApiClient acOne, acTwo;
 
-        switch (chosenDisplay){
+        switch (displayMode){
+            case DISPLAY_SALE:
+                fab.setVisibility(View.GONE);
+
+                acOne = new ApiClient(getContext(), GET_ARTICLE,this,this);
+                acOne.getArticle(receivedArticleId);
+
+                acTwo = new ApiClient(getContext(), GET_PURCHASE,this,this);
+                acTwo.getPurchase(receivedPurchaseId);
+
+                break;
             case DISPLAY_PURCHASE:
                 fab.setImageResource(R.drawable.ic_done);
 
@@ -174,8 +185,6 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
                 break;
         }
 
-        LinearLayout linearLayout = (LinearLayout) rootView.findViewById(R.id.article_base_layout);
-        linearLayout.requestFocus();
     }
 
     @Override
@@ -381,7 +390,7 @@ public class ArticleFragment extends Fragment implements ApiClient.OnResponseLis
             ApiClient apiClient;
             Account account = Account.makeAccount(accountJson);
 
-            switch (chosenDisplay){
+            switch (displayMode){
                 case DISPLAY_WITH_BUY:
 
                     fab.setEnabled(false);

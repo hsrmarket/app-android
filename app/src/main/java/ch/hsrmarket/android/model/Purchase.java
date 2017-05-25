@@ -70,4 +70,12 @@ public class Purchase {
     public void setCompleted(boolean completed) {
         this.completed = completed;
     }
+
+    public Account getSeller() {
+        return seller;
+    }
+
+    public void setSeller(Account seller) {
+        this.seller = seller;
+    }
 }

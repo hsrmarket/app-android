@@ -2,6 +2,7 @@ package ch.hsrmarket.android.api;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Handler;
@@ -9,9 +10,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
@@ -56,7 +55,7 @@ public class ApiClient implements OnJsonReady, OnInternetReady {
 
     public static final MediaType JSON_CONTENT_TYPE = MediaType.parse("application/json; charset=utf-8");
     private static final String TAG = ApiClient.class.getSimpleName();
-    private static final String BASE_URL = "http://rest.hsrmarket.ch:9000/api";
+    private final String BASE_URL;
 
     private OkHttpClient httpClient = HttpClient.getClient();
     private Gson gson = GsonClient.getClient();
@@ -72,6 +71,9 @@ public class ApiClient implements OnJsonReady, OnInternetReady {
         this.requestCode = requestCode;
         this.onResponseListener = onResponseListener;
         this.onFailureListener = onFailureListener;
+
+        SharedPreferences sharedPref = context.getSharedPreferences(context.getString(R.string.pref_url), Context.MODE_PRIVATE);
+        BASE_URL = sharedPref.getString(context.getString(R.string.secrel_url),"http://rest.hsrmarket.ch:9000/api");
     }
 
     private Request makeGetRequest(String Path){
@@ -169,7 +171,11 @@ public class ApiClient implements OnJsonReady, OnInternetReady {
 
         for(Purchase p : purchases){
             Article a = p.getArticle();
+
             a.setPurchaseId(p.getId());
+            a.setSellerId(p.getSeller().getId());
+            a.setBuyerId(p.getBuyer().getId());
+
             articles.add(a);
         }
 

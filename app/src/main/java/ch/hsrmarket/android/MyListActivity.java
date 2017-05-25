@@ -16,7 +16,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -101,7 +100,7 @@ public class MyListActivity extends AppCompatActivity implements NavigationView.
     private Fragment makeFragment(int myId){
         Bundle bundle = new Bundle();
         bundle.putInt(getString(R.string.appointed_mylist),myId);
-        bundle.putInt(getString(R.string.account_pass_id),accountId);
+        bundle.putInt(getString(R.string.mylist_account_id),accountId);
         bundle.putInt(getString(R.string.request_origin), getOriginRequestId(myId));
 
         ListFragment fragment = new ListFragment();
@@ -120,8 +119,10 @@ public class MyListActivity extends AppCompatActivity implements NavigationView.
                 return ListFragment.ORIGIN_MY_ARTICLES;
 
             case R.id.nav_sales:
+                return ListFragment.ORIGIN_MY_SALES;
+
             case R.id.nav_purchases:
-                return ListFragment.ORIGIN_PURCHASES_SALES;
+                return ListFragment.ORIGIN_MY_PURCHASES;
 
             default:
                 throw new AssertionError("Forgot to implement");

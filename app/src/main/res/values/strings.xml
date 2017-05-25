@@ -2,7 +2,7 @@
     <!-- For programming purpose -->
     <string name="appointed_category">appointedCategory</string>
     <string name="appointed_mylist">appointedMylist</string>
-    <string name="account_pass_id">accountId</string>
+    <string name="mylist_account_id">accountId</string>
     <string name="request_origin">realOrigin</string>
 
     <string name="article_pass_id">requestedId</string>
@@ -10,12 +10,18 @@
     <string name="article_pass_purchase_id">requestedPurchase</string>
     <string name="article_display_mode">displayMode</string>
 
+    <string name="pref_url">urlData</string>
+    <string name="secrel_url">secretURL</string>
+
     <string name="pref_credentials">accountData</string>
     <string name="secret_account">accountJson</string>
 
     <string name="tag_articles">articles</string>
     <string name="tag_sales">sales</string>
     <string name="tag_purchases">purchases</string>
+
+    <string name="account_display_mode">displayMode</string>
+    <string name="pass_account_id">passAccountId</string>
 
     <!-- For normal purpose -->
     <string name="app_name">HSRmarket</string>
@@ -26,6 +32,8 @@
     <string name="tab_office_supplies">Office Supplies</string>
     <string name="tab_others">Others</string>
     <string name="tab_article">Article</string>
+    <string name="tab_seller">Seller</string>
+    <string name="tab_buyer">Buyer</string>
 
     <string name="description_empty_sign">The List is empty.</string>
     <string name="title_activity_article">Article</string>
@@ -103,5 +111,6 @@
     <string name="menu_add_article">Add Article</string>
     <string name="menu_logout">Logout</string>
     <string name="menu_login">Login</string>
+
 
 </resources>
