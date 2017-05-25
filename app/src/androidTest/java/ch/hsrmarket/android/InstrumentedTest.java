@@ -23,8 +23,9 @@ import static android.support.test.InstrumentationRegistry.getInstrumentation;
  */
 
 @RunWith(Suite.class)
-//@Suite.SuiteClasses({AddArticleOtherTest.class, AddArticleOfficeTest.class, AddArticleElectronicTest.class, AddArticleBookTest.class, ShowArticleBookTest.class , ShowArticleElectronicTest.class, ShowArticleOfficeTest.class, ShowArticleOtherTest.class, LoginTest.class, MainDrawerMenuLoggedOutTest.class, MainDrawerMenuLoggedInTest.class, BuyArticleTest.class, MyListDrawerMenuTest.class})
-@Suite.SuiteClasses({})
+@Suite.SuiteClasses({RegisteryTest.class,AddArticleOtherTest.class, AddArticleOfficeTest.class, AddArticleElectronicTest.class, AddArticleBookTest.class, ShowArticleBookTest.class ,
+        ShowArticleElectronicTest.class, ShowArticleOfficeTest.class, ShowArticleOtherTest.class, LoginTest.class, MainDrawerMenuLoggedOutTest.class, MainDrawerMenuLoggedInTest.class, BuyArticleTest.class, MyListDrawerMenuTest.class})
+
 
 public class InstrumentedTest {
 
